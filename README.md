@@ -1,2 +1,36 @@
-# Registry-Database
-A hierarchical key-value storage engine featuring client-server architecture, strict data typing, and real-time synchronization.
+# Registry Database
+
+Registry Database is a hierarchical key-value data storage system designed for structured data management and inter-process communication. It utilizes a client-server architecture over TCP/IP to ensure reliable, thread-safe data access across distributed components or local services.
+
+## Overview
+
+The system organizes data into a tree-like structure, similar to the Windows Registry, allowing for complex, nested configurations and state management. It provides a robust communication protocol for reading, modifying, and monitoring data states in real time without exposing the underlying physical storage mechanics to the client applications.
+
+## Core Features
+
+*   **Hierarchical Structure:** Organizes information into logical paths and endpoints, supporting deep nesting and structured data grouping.
+*   **Client-Server Architecture:** Operates over network sockets (TCP) with built-in multiplexing, allowing multiple clients to interface with the database service concurrently.
+*   **Strict Data Typing:** Native implementation and enforcement of standard binary types, including:
+    *   `String` (Variable length)
+    *   `Byte` (8-bit unsigned)
+    *   `Word` (16-bit unsigned)
+    *   `DWord` (32-bit unsigned)
+    *   `QWord` (64-bit unsigned)
+*   **Real-time Synchronization:** Built-in event-driven update mechanisms (`UPDATE_TRIGGER`) allowing clients to subscribe to specific nodes and receive immediate state changes.
+*   **Concurrency & Thread Safety:** Utilizes robust locking mechanisms (`std::mutex`, `std::shared_mutex`) to handle concurrent read/write operations and prevent data races.
+*   **Data Serialization:** Supports structural extraction and structural views, including full JSON tree mapping for external integration and debugging.
+*   **Batch Operations:** Capability to process multiple key and value operations (Create, Read, Modify, Delete) within a single execution cycle to minimize network overhead.
+
+## Architecture
+
+Registry Database is split into two primary components:
+1.  **Host Service (`registry_editor_host`):** The central server that maintains the data tree in memory, handles disk I/O, processes incoming socket connections, and dispatches data updates to subscribed clients.
+2.  **Client Library:** A lightweight interface that provides developers with direct, strictly-typed functions to interact with the database over the network layer.
+
+The communication layer handles automated error correction and status code lookups to maintain stable connectivity and predictable failure states during I/O operations.
+
+## License
+
+Copyright (c) 2022 RANDOM ARMESE HITEMIT. All rights reserved.
+
+This project is licensed under the MIT License. See the `LICENSE` file for more details.
