@@ -30,6 +30,19 @@ Registry Database is split into three primary components:
 
 The communication layer handles automated error correction and status code lookups to maintain stable connectivity and predictable failure states during I/O operations.
 
+## Dependencies
+
+Registry Database may depend on several internal and third-party components for data storage, hashing, serialization, networking, synchronization, and system-level operations. The exact dependency set may vary between builds and versions as additional features are introduced.
+
+| Dependency                     | Type                        | Purpose / Usage                                                                                                                                                                                                   | Integration                                                                                                                                   |
+| ------------------------------ | --------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `ankerl::unordered_dense::map` | Third-party C++ library     | High-performance hash map used for fast key-based lookup and in-memory indexing of registry data, client/session information, subscriptions, and other internal structures where hash-based access is beneficial. | Integrated directly into the C++ implementation; used as an internal container and is not intended to define the public registry data format. |
+| `system.h`                     | Internal library            | Provides system-level functionality required by the project, such as platform-specific operations and low-level runtime facilities used by the Registry Database implementation.                                  | Internal project dependency; may be updated together with the main codebase.                                                                  |
+| `utilityX.h`                   | Internal library            | Provides common low-level utilities and supporting functionality used throughout the implementation, including internal helpers required by the Registry Database components.                                     | Internal project dependency; version changes may occur together with the main project.                                                        |
+| C++ Standard Library           | Standard library            | Provides fundamental language/runtime facilities, containers, synchronization primitives, strings, exceptions, and other standard functionality required by the implementation.                                   | Required by the C++ build environment.                                                                                                        |
+| TCP/IP Socket API              | System / platform interface | Provides the communication transport between the Registry Database Host Service and connected clients or local services.                                                                                          | Platform-dependent implementation behind the communication layer.                                                                             |
+
+
 ## Remider/Notices
 
 Since "Registry Database" (also known as "Registry Editor") originated from one of my private projects, it shares some core dependencies. Libraries like utilityX.h and system.h will be continuously maintained and updated in sync with my main project.
@@ -46,7 +59,7 @@ Additionally, the current file manipulation interface relies on raw pointers. It
 
 ## License
 
-Copyright (c) 2022 RANDOM ARMESE HITEMIT. 
+Copyright (c) 2022 RANDOM ARMESE HITEMIT. <br>
 All rights reserved.
 
 * Software License:<br>
