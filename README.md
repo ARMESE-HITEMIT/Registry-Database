@@ -52,8 +52,7 @@ All rights reserved.
 * Software License:
 
   HREF: `https://docs.google.com/document/d/1_BNwiYPVKE7-OBkRfHusiKhqvkmBwJFBXv6fG7i2ntk/edit?usp=sharing`
-  SCAN CODE:
-![software_license_scancode](Program%20Datas/Resources/Documents/software_license_scancode.png)
+  SCAN CODE: <img src="Program%20Datas/Resources/Documents/software_license_scancode.png" width="250">
 ------------------------------------------------------------------------------------------------------------------
 * License Agreement - Global Version:
 
