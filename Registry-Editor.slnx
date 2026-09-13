@@ -1,0 +1,19 @@
+<Solution>
+  <Configurations>
+    <Platform Name="x64" />
+    <Platform Name="x86" />
+  </Configurations>
+  <Folder Name="/root/">
+    <File Path="LICENSE" />
+    <File Path="README.md" />
+  </Folder>
+  <Folder Name="/root/Program Datas/" />
+  <Folder Name="/root/Program files/">
+    <Project Path="Program Files/registry_editor host/registry_editor host.vcxproj" Id="2862a06d-d446-44e0-b5f4-c2445f549f0c" />
+  </Folder>
+  <Folder Name="/root/Program Libraries/">
+    <Project Path="Program Libraries/registry_editor/registry_editor.vcxproj" Id="a6659ab6-29a6-4165-a9f3-be026dc7692c" />
+    <Project Path="Program Libraries/system/system.vcxproj" Id="2f1e4880-2912-43a1-9e72-5122ad0a86d8" />
+    <Project Path="Program Libraries/utilityX/utilityX.vcxproj" Id="809cc6e4-e10a-4235-9fb4-3fbaf324b5c7" />
+  </Folder>
+</Solution>

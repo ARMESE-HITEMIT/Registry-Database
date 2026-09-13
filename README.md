@@ -12,8 +12,8 @@ The system organizes data into a tree-like structure, similar to the Windows Reg
 *   **Client-Server Architecture:** Operates over network sockets (TCP) with built-in multiplexing, allowing multiple clients to interface with the database service concurrently.
 *   **Strict Data Typing:** Native implementation and enforcement of standard binary types, including:
     *   `VALUE` : (Variable length)
-    *   `BYTE `  : (8-bit unsigned)
-    *   `WORD `  : (16-bit unsigned)
+    *   `BYTE ` : (8-bit unsigned)
+    *   `WORD ` : (16-bit unsigned)
     *   `DWORD` : (32-bit unsigned)
     *   `QWORD` : (64-bit unsigned)
 *   **Real-time Synchronization:** Built-in event-driven update mechanisms allowing clients to subscribe to specific nodes and receive immediate state changes.

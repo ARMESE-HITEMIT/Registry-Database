@@ -1,0 +1,140 @@
+{
+    "format_version": "1.0A",
+    "section_data": {
+        "description": {
+            "identifier": "global.inter_process_communications_and_connector_port_used",
+            "properties": [
+                "components"
+            ],
+            "to": "components>protocols_identifications"
+        },
+        "components": {
+            "protocols_identifications": [
+                {
+                    "name": "global.registry_editor",
+                    "ip_port": [
+                        {
+                            "services": "registry_editor",
+                            "ip": "127.0.0.1",
+                            "port": 41420
+                        }
+                    ]
+                },
+                {
+                    "name": "global.terminal_cli_host",
+                    "ip_port": [
+                        {
+                            "services": "terminal_close_port",
+                            "ip": "127.0.0.3",
+                            "port": 14
+                        },
+                        {
+                            "services": "terminal_pairing_protocol_host",
+                            "ip": "127.0.0.8"
+                        },
+                        {
+                            "services": "terminal_pairing_protocol_client",
+                            "ip": "127.0.0.9"
+                        },
+                        {
+                            "services": "terminal_connect_package_host_A",
+                            "ip": "127.0.0.4"
+                        },
+                        {
+                            "services": "terminal_connect_package_client_A",
+                            "ip": "127.0.0.5"
+                        },
+                        {
+                            "services": "terminal_connect_terminal_host_A",
+                            "ip": "127.0.0.6"
+                        },
+                        {
+                            "services": "terminal_connect_terminal_client_A",
+                            "ip": "127.0.0.7"
+                        }
+                    ]
+                },
+                {
+                    "name": "global.systems",
+                    "ip_port": [
+                        {
+                            "services": "recoder_log",
+                            "ip": "127.0.0.2",
+                            "port": 41422
+                        },
+                        {
+                            "services": "service_start_stop",
+                            "ip": "127.0.0.3",
+                            "port": 1
+                        },
+                        {
+                            "services": "service_start_stop",
+                            "ip": "127.0.0.3",
+                            "port": 2
+                        },
+                        {
+                            "services": "system_start_stop_host",
+                            "ip": "127.0.0.3",
+                            "port": 3
+                        },
+                        {
+                            "services": "system_start_stop_client",
+                            "ip": "127.0.0.3",
+                            "port": 4
+                        },
+                        {
+                            "services": "system_check_ecc_host",
+                            "ip": "127.0.0.3",
+                            "port": 5
+                        },
+                        {
+                            "services": "system_check_ecc_client",
+                            "ip": "127.0.0.3",
+                            "port": 6
+                        },
+                        {
+                            "services": "system_check_post_A",
+                            "ip": "127.0.0.3",
+                            "port": 7
+                        },
+                        {
+                            "services": "system_check_post_requester",
+                            "ip": "127.0.0.3",
+                            "port": 8
+                        },
+                        {
+                            "services": "system_close_port_for_terminal-cli",
+                            "ip": "127.0.0.3",
+                            "port": 13
+                        }
+                    ]
+                },
+                {
+                    "name": "global.ignitor",
+                    "ip_port": [
+                        {
+                            "services": "ignitor_host_spinwaitor",
+                            "ip": "127.0.0.3",
+                            "port": 9
+                        },
+                        {
+                            "services": "ignitor_client_spinwaitor",
+                            "ip": "127.0.0.3",
+                            "port": 10
+                        },
+                        {
+                            "services": "ignitor_client_host_spinwaitor",
+                            "ip": "127.0.0.3",
+                            "port": 11
+                        },
+                        {
+                            "services": "ignitor_client_updator_spinwaitor",
+                            "ip": "127.0.0.3",
+                            "port": 12
+                        }
+                    ]
+                }
+            ]
+        }
+    }
+}

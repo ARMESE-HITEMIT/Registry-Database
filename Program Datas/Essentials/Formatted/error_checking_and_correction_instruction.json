@@ -1,0 +1,1960 @@
+{
+    "format_version": "1.0A",
+    "section_data": {
+        "description": {
+            "identifier": "global.error_checking_and_correction_instruction",
+            "properties": [
+                "components",
+                "entries"
+            ]
+        },
+        "components": {
+            "services_identification": [
+                {
+                    "id": "global.systems",
+                    "numerical": {
+                        "dec": 0,
+                        "hex": "0x0000000000000000"
+                    },
+                    "to": [
+                        "entries",
+                        0
+                    ]
+                },
+                {
+                    "id": "global.bootloader",
+                    "numerical": {
+                        "dec": 1,
+                        "hex": "0x0000000000000001"
+                    },
+                    "to": [
+                        "entries",
+                        1
+                    ]
+                },
+                {
+                    "id": "global.registry_editor",
+                    "numerical": {
+                        "dec": 2,
+                        "hex": "0x0000000000000002"
+                    },
+                    "to": [
+                        "entries",
+                        2
+                    ]
+                },
+                {
+                    "id": "global.terminal_cli_host",
+                    "numerical": {
+                        "dec": 3,
+                        "hex": "0x0000000000000003"
+                    },
+                    "to": [
+                        "entries",
+                        3
+                    ]
+                },
+                {
+                    "id": "utilityX_library",
+                    "numerical": {
+                        "dec": 4,
+                        "hex": "0x0000000000000004"
+                    },
+                    "to": [
+                        "entries",
+                        4
+                    ]
+                },
+                {
+                    "id": "model_application",
+                    "numerical": {
+                        "dec": 5,
+                        "hex": "0x0000000000000005"
+                    },
+                    "to": [
+                        "entries",
+                        5
+                    ]
+                },
+                {
+                    "id": "global.format_json_preprocessor_editor",
+                    "numerical": {
+                        "dec": 6,
+                        "hex": "0x0000000000000006"
+                    },
+                    "to": [
+                        "entries",
+                        6
+                    ]
+                },
+                {
+                    "id": "global.command_processor",
+                    "numerical": {
+                        "dec": 7,
+                        "hex": "0x0000000000000007"
+                    },
+                    "to": [
+                        "entries",
+                        7
+                    ]
+                }
+            ]
+        },
+        "entries": [
+            {
+                "description": {
+                    "identifier": "global.systems"
+                },
+                "components": {
+                    "error_code_checking_and_correction": [
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: WSAStartup failed.",
+                            "numerical": {
+                                "dec": 0,
+                                "hex": "0x0000000000000000"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: decode overflow.",
+                            "numerical": {
+                                "dec": 1,
+                                "hex": "0x0000000000000001"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: payload too large.",
+                            "numerical": {
+                                "dec": 2,
+                                "hex": "0x0000000000000002"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: connection closed.",
+                            "numerical": {
+                                "dec": 3,
+                                "hex": "0x0000000000000003"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: bad magic.",
+                            "numerical": {
+                                "dec": 4,
+                                "hex": "0x0000000000000004"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: bad version.",
+                            "numerical": {
+                                "dec": 5,
+                                "hex": "0x0000000000000005"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: ip string too long.",
+                            "numerical": {
+                                "dec": 6,
+                                "hex": "0x0000000000000006"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: endpoint decode overflow.",
+                            "numerical": {
+                                "dec": 7,
+                                "hex": "0x0000000000000007"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: unsupported value type.",
+                            "numerical": {
+                                "dec": 8,
+                                "hex": "0x0000000000000008"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: invalid ipv4 address.",
+                            "numerical": {
+                                "dec": 9,
+                                "hex": "0x0000000000000009"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: socket create failed.",
+                            "numerical": {
+                                "dec": 10,
+                                "hex": "0x000000000000000A"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: bind failed.",
+                            "numerical": {
+                                "dec": 11,
+                                "hex": "0x000000000000000B"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: listen failed.",
+                            "numerical": {
+                                "dec": 12,
+                                "hex": "0x000000000000000C"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: connect failed.",
+                            "numerical": {
+                                "dec": 13,
+                                "hex": "0x000000000000000D"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: listener callback threw.",
+                            "numerical": {
+                                "dec": 14,
+                                "hex": "0x000000000000000E"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: connector is not initialized.",
+                            "numerical": {
+                                "dec": 15,
+                                "hex": "0x000000000000000F"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: connector server is closed or not running.",
+                            "numerical": {
+                                "dec": 16,
+                                "hex": "0x0000000000000010"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: connector is already connected or busy.",
+                            "numerical": {
+                                "dec": 17,
+                                "hex": "0x0000000000000011"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: connector is not connected or connection was closed.",
+                            "numerical": {
+                                "dec": 18,
+                                "hex": "0x0000000000000012"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "connection failed: listener callback is missing.",
+                            "numerical": {
+                                "dec": 19,
+                                "hex": "0x0000000000000013"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.recorder_services_failed",
+                            "msg": "file system: cannot open log file.",
+                            "numerical": {
+                                "dec": 20,
+                                "hex": "0x0000000000000014"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.recorder_services_failed",
+                            "msg": "identifier: services name cannot be longer than 32 characters.",
+                            "numerical": {
+                                "dec": 21,
+                                "hex": "0x0000000000000015"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.recorder_services_failed",
+                            "msg": "identifier: invalid closing object.",
+                            "numerical": {
+                                "dec": 22,
+                                "hex": "0x0000000000000016"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.recorder_services_failed_to_write",
+                            "msg": "format: input element must have same size as setup segment count.",
+                            "numerical": {
+                                "dec": 23,
+                                "hex": "0x0000000000000017"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.recorder_services_failed_to_write",
+                            "msg": "format: input element must not exceed configured segment size.",
+                            "numerical": {
+                                "dec": 24,
+                                "hex": "0x0000000000000018"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.recorder_services_failed",
+                            "msg": "format: log file path cannot be empty.",
+                            "numerical": {
+                                "dec": 25,
+                                "hex": "0x0000000000000019"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.recorder_services_failed_to_write",
+                            "msg": "identifier: failed to write or invalid recorder state.",
+                            "numerical": {
+                                "dec": 26,
+                                "hex": "0x000000000000001A"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.recorder_services_failed_to_write",
+                            "msg": "format: list of segment_max_size size cannot be greater than setup segment count.",
+                            "numerical": {
+                                "dec": 27,
+                                "hex": "0x000000000000001B"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.recorder_services_failed_to_write",
+                            "msg": "critical error: Cannot Connect to recorder host.",
+                            "numerical": {
+                                "dec": 28,
+                                "hex": "0x000000000000001C"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.recorder_services_failed_to_write",
+                            "msg": "format: file already opened by another active recorder with different format.",
+                            "numerical": {
+                                "dec": 29,
+                                "hex": "0x000000000000001D"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.ecc_error",
+                            "msg": "critical error: Error Correction Handle Cannot Find Instruction File",
+                            "numerical": {
+                                "dec": 30,
+                                "hex": "0x000000000000001E"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 0 30"
+                            ]
+                        },
+                        {
+                            "id": "critical.ecc_error",
+                            "msg": "critical error: ECC information does not match any Error Correction Handle instruction",
+                            "numerical": {
+                                "dec": 31,
+                                "hex": "0x000000000000001F"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 0 31"
+                            ]
+                        },
+                        {
+                            "id": "critical.system_failed",
+                            "msg": "critical error: system cannot find global registry file",
+                            "numerical": {
+                                "dec": 32,
+                                "hex": "0x0000000000000020"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 0 32"
+                            ]
+                        },
+                        {
+                            "id": "critical.system_failed",
+                            "msg": "critical error: invalid global registry file",
+                            "numerical": {
+                                "dec": 33,
+                                "hex": "0x0000000000000021"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 0 33"
+                            ]
+                        },
+                        {
+                            "id": "critical.system_failed",
+                            "msg": "critical error: system service startup sequence received an unexpected non-ECC exception",
+                            "numerical": {
+                                "dec": 34,
+                                "hex": "0x0000000000000022"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 0 34"
+                            ]
+                        },
+                        {
+                            "id": "critical.system_failed",
+                            "msg": "critical error: system service startup sequence failed to start registry editor host services due to missing executable file",
+                            "numerical": {
+                                "dec": 35,
+                                "hex": "0x0000000000000023"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 0 35"
+                            ]
+                        },
+                        {
+                            "id": "critical.system_failed",
+                            "msg": "critical error: system service startup sequence failed to start terminal-command-cli host services due to missing executable file",
+                            "numerical": {
+                                "dec": 36,
+                                "hex": "0x0000000000000024"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 0 36"
+                            ]
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "searcher: uac manager cannot find \"*__root__*>HKEY_USERS\" registry key",
+                            "numerical": {
+                                "dec": 37,
+                                "hex": "0x0000000000000025"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "searcher: uac manager cannot find user setting in registry",
+                            "numerical": {
+                                "dec": 38,
+                                "hex": "0x0000000000000026"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "searcher: error while reading",
+                            "numerical": {
+                                "dec": 39,
+                                "hex": "0x0000000000000027"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "access denied: incorrect password",
+                            "numerical": {
+                                "dec": 40,
+                                "hex": "0x0000000000000028"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "account create failed: user id is already exist",
+                            "numerical": {
+                                "dec": 41,
+                                "hex": "0x0000000000000029"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "invalid data: missing key \"uac_concept_comparator_credential\" at registry path: \"*__root__*>HKEY-CLASSES-ROOT>Storage>system\"",
+                            "numerical": {
+                                "dec": 42,
+                                "hex": "0x0000000000000030"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "invalid data: missing value \"first_admin_uuid\" at registry path: \"*__root__*>HKEY-CLASSES-ROOT>Storage>system\"",
+                            "numerical": {
+                                "dec": 43,
+                                "hex": "0x0000000000000031"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "invalid operation: cannot transfer first admin role from a non-first-admin account.",
+                            "numerical": {
+                                "dec": 44,
+                                "hex": "0x0000000000000032"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "invalid data: target transfer account does not exist.",
+                            "numerical": {
+                                "dec": 45,
+                                "hex": "0x0000000000000033"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "invalid operation: cannot transfer first admin role to the same account being deleted.",
+                            "numerical": {
+                                "dec": 46,
+                                "hex": "0x0000000000000034"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uac_fault",
+                            "msg": "failsafe: reloggin required",
+                            "numerical": {
+                                "dec": 47,
+                                "hex": "0x0000000000000035"
+                            },
+                            "stack_call": []
+                        }
+                    ]
+                }
+            },
+            {
+                "description": {
+                    "identifier": "global.bootloader"
+                },
+                "components": {
+                    "error_code_checking_and_correction": [
+                        {
+                            "id": "critical.boot_failed",
+                            "msg": "boot failed: unable to find \"System Host Binary Execuatble\" File at ./x64/release.",
+                            "numerical": {
+                                "dec": 0,
+                                "hex": "0x0000000000000000"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.boot_failed",
+                            "msg": "boot failed: unable to find \"Registry Editor Host Binary Execuatble\" File at ./x64/release.",
+                            "numerical": {
+                                "dec": 1,
+                                "hex": "0x0000000000000001"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.boot_failed",
+                            "msg": "boot failed: unable to find \"Terminal CLI Host Binary Execuatble\" File at ./x64/release.",
+                            "numerical": {
+                                "dec": 2,
+                                "hex": "0x0000000000000002"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.boot_failed",
+                            "msg": "boot failed: unable to start Registry Editor Host. Time Out",
+                            "numerical": {
+                                "dec": 3,
+                                "hex": "0x0000000000000003"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.boot_failed",
+                            "msg": "boot failed: unable to start Terminal CLI Host. Time Out",
+                            "numerical": {
+                                "dec": 4,
+                                "hex": "0x0000000000000004"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.boot_failed",
+                            "msg": "boot failed: unable to start System Host. Time Out",
+                            "numerical": {
+                                "dec": 5,
+                                "hex": "0x0000000000000005"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.boot_failed",
+                            "msg": "boot failed: unable to stop Terminal CLI Host",
+                            "numerical": {
+                                "dec": 6,
+                                "hex": "0x0000000000000006"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.boot_failed",
+                            "msg": "boot failed: unable to stop Registry Editor Host",
+                            "numerical": {
+                                "dec": 6,
+                                "hex": "0x0000000000000006"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.load_failed",
+                            "msg": "load failed: unable to load global registry file.",
+                            "numerical": {
+                                "dec": 7,
+                                "hex": "0x0000000000000007"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.load_failed",
+                            "msg": "load failed: unable to close global registry file.",
+                            "numerical": {
+                                "dec": 8,
+                                "hex": "0x0000000000000008"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.load_failed",
+                            "msg": "load failed: invalid global registry file.",
+                            "numerical": {
+                                "dec": 9,
+                                "hex": "0x0000000000000009"
+                            },
+                            "stack_call": []
+                        }
+                    ]
+                }
+            },
+            {
+                "description": {
+                    "identifier": "global.registry_editor"
+                },
+                "components": {
+                    "error_code_checking_and_correction": [
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path: node has no children at node.",
+                            "numerical": {
+                                "dec": 0,
+                                "hex": "0x0000000000000000"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path: element name does not exist.",
+                            "numerical": {
+                                "dec": 1,
+                                "hex": "0x0000000000000001"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path: element is not a value.",
+                            "numerical": {
+                                "dec": 2,
+                                "hex": "0x0000000000000002"
+                            },
+                            
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path: element is not a byte.",
+                            "numerical": {
+                                "dec": 3,
+                                "hex": "0x0000000000000003"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path: element is not a word.",
+                            "numerical": {
+                                "dec": 4,
+                                "hex": "0x0000000000000004"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path: element is not a dword.",
+                            "numerical": {
+                                "dec": 5,
+                                "hex": "0x0000000000000005"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path: element is not a qword.",
+                            "numerical": {
+                                "dec": 6,
+                                "hex": "0x0000000000000006"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path",
+                            "numerical": {
+                                "dec": 7,
+                                "hex": "0x0000000000000007"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path: missing *__root__*",
+                            "numerical": {
+                                "dec": 8,
+                                "hex": "0x0000000000000008"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "key/value/byte/word/dword/qword already exists",
+                            "numerical": {
+                                "dec": 9,
+                                "hex": "0x0000000000000009"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.file_system",
+                            "msg": "file not found",
+                            "numerical": {
+                                "dec": 10,
+                                "hex": "0x000000000000000A"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.file_system",
+                            "msg": "corrupted file",
+                            "numerical": {
+                                "dec": 11,
+                                "hex": "0x000000000000000B"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.file_system",
+                            "msg": "cannot open file",
+                            "numerical": {
+                                "dec": 12,
+                                "hex": "0x000000000000000C"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.file_system",
+                            "msg": "invalid file",
+                            "numerical": {
+                                "dec": 13,
+                                "hex": "0x000000000000000D"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_path",
+                            "msg": "invalid path: element is a key",
+                            "numerical": {
+                                "dec": 14,
+                                "hex": "0x000000000000000E"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_name",
+                            "msg": "invalid name: element must be name with: [ a-z,A-Z, 0-9, _, -, {, }, [, ], ., @, #, !, :, ?, ~  ] only",
+                            "numerical": {
+                                "dec": 15,
+                                "hex": "0x000000000000000F"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_name",
+                            "msg": "invalid name: element name must only atleast contain 1 character and maximum 255 characters",
+                            "numerical": {
+                                "dec": 16,
+                                "hex": "0x0000000000000010"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_object",
+                            "msg": "invalid object: free object does not exist",
+                            "numerical": {
+                                "dec": 17,
+                                "hex": "0x0000000000000011"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.connection_closed",
+                            "msg": "critical error: IPC drop",
+                            "numerical": {
+                                "dec": 18,
+                                "hex": "0x0000000000000012"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 18"
+                            ]
+                        },
+                        {
+                            "id": "critical.connection_closed",
+                            "msg": "critical error: Cannot Connect",
+                            "numerical": {
+                                "dec": 19,
+                                "hex": "0x0000000000000013"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 19"
+                            ]
+                        },
+                        {
+                            "id": "exception.memory_allocation",
+                            "msg": "memory allocation failed: cannot open file due to lack of memory or excessive length",
+                            "numerical": {
+                                "dec": 20,
+                                "hex": "0x0000000000000014"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.memory_allocation",
+                            "msg": "memory allocation failed: modify string due to lack of memory or excessive length",
+                            "numerical": {
+                                "dec": 21,
+                                "hex": "0x0000000000000015"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.memory_allocation",
+                            "msg": "memory allocation failed: create string due to lack of memory or excessive length",
+                            "numerical": {
+                                "dec": 22,
+                                "hex": "0x0000000000000016"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.socket_receive_failed",
+                            "msg": "critical error: socket receive failed",
+                            "numerical": {
+                                "dec": 23,
+                                "hex": "0x0000000000000017"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 23"
+                            ]
+                        },
+                        {
+                            "id": "critical.socket_send_failed",
+                            "msg": "critical error: socket send failed",
+                            "numerical": {
+                                "dec": 24,
+                                "hex": "0x0000000000000018"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 24"
+                            ]
+                        },
+                        {
+                            "id": "critical.unexpected_value_type",
+                            "msg": "critical error: unexpected VALUE_TYPE",
+                            "numerical": {
+                                "dec": 25,
+                                "hex": "0x0000000000000019"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 25"
+                            ]
+                        },
+                        {
+                            "id": "critical.expected_byte",
+                            "msg": "critical error: expected BYTE",
+                            "numerical": {
+                                "dec": 26,
+                                "hex": "0x000000000000001A"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 26"
+                            ]
+                        },
+                        {
+                            "id": "critical.expected_word",
+                            "msg": "critical error: expected WORD",
+                            "numerical": {
+                                "dec": 27,
+                                "hex": "0x000000000000001B"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 27"
+                            ]
+                        },
+                        {
+                            "id": "critical.expected_dword",
+                            "msg": "critical error: expected DWORD",
+                            "numerical": {
+                                "dec": 28,
+                                "hex": "0x000000000000001C"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 28"
+                            ]
+                        },
+                        {
+                            "id": "critical.expected_qword",
+                            "msg": "critical error: expected QWORD",
+                            "numerical": {
+                                "dec": 29,
+                                "hex": "0x000000000000001D"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 29"
+                            ]
+                        },
+                        {
+                            "id": "critical.expected_string",
+                            "msg": "critical error: expected DATA(String)",
+                            "numerical": {
+                                "dec": 30,
+                                "hex": "0x000000000000001E"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 30"
+                            ]
+                        },
+                        {
+                            "id": "critical.packet_truncated",
+                            "msg": "critical error: packet truncated",
+                            "numerical": {
+                                "dec": 31,
+                                "hex": "0x000000000000001F"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 31"
+                            ]
+                        },
+                        {
+                            "id": "critical.packet_corrupted",
+                            "msg": "critical error: packet corrupted",
+                            "numerical": {
+                                "dec": 32,
+                                "hex": "0x0000000000000020"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 32"
+                            ]
+                        },
+                        {
+                            "id": "critical.invalid_enum_value",
+                            "msg": "critical error: invalid enum value",
+                            "numerical": {
+                                "dec": 33,
+                                "hex": "0x0000000000000021"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 33"
+                            ]
+                        },
+                        {
+                            "id": "critical.string_length_too_large",
+                            "msg": "critical error: string length too large",
+                            "numerical": {
+                                "dec": 34,
+                                "hex": "0x0000000000000022"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 2 34"
+                            ]
+                        }
+                    ]
+                }
+            },
+            {
+                "description": {
+                    "identifier": "global.terminal_cli_host"
+                },
+                "components": {
+                    "error_code_checking_and_correction": [
+                        {
+                            "id": "critical.not_found_system_file",
+                            "msg": "critical error: not found 'global.system_registry.regx' at '../RandomArmeseHitemit/Program Datas/Essentinals'",
+                            "numerical": {
+                                "dec": 0,
+                                "hex": "0x0000000000000000"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 3 0"
+                            ]
+                        },
+                        {
+                            "id": "critical.invalid_file_format",
+                            "msg": "critical error: invalid reg file type",
+                            "numerical": {
+                                "dec": 1,
+                                "hex": "0x0000000000000001"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 3 1"
+                            ]
+                        },
+                        {
+                            "id": "critical.connection_closed",
+                            "msg": "critical error: host is offline",
+                            "numerical": {
+                                "dec": 2,
+                                "hex": "0x000000000000002"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 3 2"
+                            ]
+                        },
+                        {
+                            "id": "exception.invalid_command",
+                            "msg": "invalid comand: command does not exist",
+                            "numerical": {
+                                "dec": 3,
+                                "hex": "0x000000000000003"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_command",
+                            "msg": "invalid comand: command does not take any option",
+                            "numerical": {
+                                "dec": 4,
+                                "hex": "0x000000000000004"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_command",
+                            "msg": "invalid comand: invalid type of option",
+                            "numerical": {
+                                "dec": 5,
+                                "hex": "0x000000000000005"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_command",
+                            "msg": "invalid comand: command does not take any flag",
+                            "numerical": {
+                                "dec": 6,
+                                "hex": "0x000000000000006"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_command",
+                            "msg": "invalid comand: invalid type of flag",
+                            "numerical": {
+                                "dec": 7,
+                                "hex": "0x000000000000007"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_command",
+                            "msg": "invalid comand: command does not take any positional",
+                            "numerical": {
+                                "dec": 8,
+                                "hex": "0x000000000000008"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_command",
+                            "msg": "invalid comand: invalid size of positional",
+                            "numerical": {
+                                "dec": 9,
+                                "hex": "0x000000000000009"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_command",
+                            "msg": "invalid comand: invalid data type of positional",
+                            "numerical": {
+                                "dec": 10,
+                                "hex": "0x00000000000000A"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_command",
+                            "msg": "invalid comand: invalid data type of option",
+                            "numerical": {
+                                "dec": 11,
+                                "hex": "0x00000000000000B"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "critical.invalid_data",
+                            "msg": "invalid data: \"include_command_extentions_default_folderpath\" cannot be empty.",
+                            "numerical": {
+                                "dec": 12,
+                                "hex": "0x00000000000000C"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 3 12"
+                            ]
+                        },
+                        {
+                            "id": "critical.invalid_data",
+                            "msg": "invalid data: \"include_command_extentions_default_folderpath\". does not exist that specific folderpath.",
+                            "numerical": {
+                                "dec": 13,
+                                "hex": "0x00000000000000D"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 3 13"
+                            ]
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: failed to load package. \"manifest.json\" does not exist",
+                            "numerical": {
+                                "dec": 14,
+                                "hex": "0x000000000000000E"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: failed to load package. Unsupported Format Version",
+                            "numerical": {
+                                "dec": 15,
+                                "hex": "0x000000000000000F"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: failed to load package. Invalid \"manifest.json\" format",
+                            "numerical": {
+                                "dec": 16,
+                                "hex": "0x0000000000000010"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: failed to load package. missing other packages",
+                            "numerical": {
+                                "dec": 17,
+                                "hex": "0x0000000000000011"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: package identifier must have maximum 32 characters",
+                            "numerical": {
+                                "dec": 18,
+                                "hex": "0x0000000000000012"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: package identifier must have atleast 1 character",
+                            "numerical": {
+                                "dec": 19,
+                                "hex": "0x0000000000000013"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.memory_allocation",
+                            "msg": "bad command package: bad allocating, program cannot load package due to limited of memory",
+                            "numerical": {
+                                "dec": 20,
+                                "hex": "0x0000000000000014"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: cannot load command, invalid command name. Command name MUST only contain [A-Z], [a-z], [0-9], - (minus), _ (underscore), # (hash), % (percent sign), @ (at sign).",
+                            "numerical": {
+                                "dec": 21,
+                                "hex": "0x0000000000000015"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: cannot load commands",
+                            "numerical": {
+                                "dec": 22,
+                                "hex": "0x0000000000000016"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: invalid command flags. duplicated command id",
+                            "numerical": {
+                                "dec": 23,
+                                "hex": "0x0000000000000017"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: fail to load command flags.",
+                            "numerical": {
+                                "dec": 24,
+                                "hex": "0x0000000000000018"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: fail to load command flags. Invalid \"postionals\".",
+                            "numerical": {
+                                "dec": 25,
+                                "hex": "0x0000000000000019"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: fail to load command flags. Invalid type of \"postionals\".",
+                            "numerical": {
+                                "dec": 26,
+                                "hex": "0x0000000000000020"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: fail to load command options. Invalid \"postionals\".",
+                            "numerical": {
+                                "dec": 27,
+                                "hex": "0x0000000000000019"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: fail to load command options. Invalid type of \"postionals\".",
+                            "numerical": {
+                                "dec": 28,
+                                "hex": "0x0000000000000020"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.bad_command_package",
+                            "msg": "bad command package: invalid command definition or contradictory command relationship.",
+                            "numerical": {
+                                "dec": 29,
+                                "hex": "0x000000000000001D"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "criditical.invalid_file_format",
+                            "msg": "registry path: \"*__root__*>HKEY-CLASSES-ROOT>Services>...\" is inaccessible or invalid. Please check the registry path.",
+                            "numerical": {
+                                "dec": 30,
+                                "hex": "0x000000000000001E"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 3 30"
+                            ]
+                        },
+                        {
+                            "id": "exception.operator_fault",
+                            "msg": "Duplicate package_identifier: the identifier is already registered.",
+                            "numerical": {
+                                "dec": 31,
+                                "hex": "0x000000000000001F"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.operator_fault",
+                            "msg": "Duplicate package_identifier: the identifier is already registered.",
+                            "numerical": {
+                                "dec": 32,
+                                "hex": "0x0000000000000020"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "criditical.too_much_packages",
+                            "msg": "critical error: Too much packages",
+                            "numerical": {
+                                "dec": 33,
+                                "hex": "0x0000000000000021"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 3 33"
+                            ]
+                        },
+                        {
+                            "id": "exception.too_much_clients",
+                            "msg": "Error: Too much clients",
+                            "numerical": {
+                                "dec": 34,
+                                "hex": "0x0000000000000022"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_id",
+                            "msg": "exception: unexisted id",
+                            "numerical": {
+                                "dec": 35,
+                                "hex": "0x0000000000000023"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.incorrect_password",
+                            "msg": "exception: incorrect password",
+                            "numerical": {
+                                "dec": 36,
+                                "hex": "0x0000000000000024"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.system_in_size_not_enought",
+                            "msg": "exception: System in size while running execute() isn't enought",
+                            "numerical": {
+                                "dec": 37,
+                                "hex": "0x0000000000000025"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.connection_failed",
+                            "msg": "exception: cannot connect",
+                            "numerical": {
+                                "dec": 38,
+                                "hex": "0x0000000000000026"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.return_value",
+                            "msg": "format: invalid datatype input",
+                            "numerical": {
+                                "dec": 39,
+                                "hex": "0x0000000000000027"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.return_value",
+                            "msg": "format: reading uninit",
+                            "numerical": {
+                                "dec": 40,
+                                "hex": "0x0000000000000028"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.return_value",
+                            "msg": "format: index out of bounds",
+                            "numerical": { 
+                                "dec": 41, 
+                                "hex": "0x0000000000000029" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.return_value",
+                            "msg": "format: invalid data type operation",
+                            "numerical": { 
+                                "dec": 42, 
+                                "hex": "0x000000000000002A" 
+                            },
+                            "stack_call": []
+                        }
+                    ]
+                }
+            },
+            {
+                "description": {
+                    "identifier": "utilityX_library"
+                },
+                "components": {
+                    "error_code_checking_and_correction": [
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: invalid number base",
+                            "numerical": {
+                                "dec": 0,
+                                "hex": "0x0000000000000000"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: empty number string",
+                            "numerical": {
+                                "dec": 1,
+                                "hex": "0x0000000000000001"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: number string has only sign",
+                            "numerical": {
+                                "dec": 2,
+                                "hex": "0x0000000000000002"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: number string has prefix but no digits",
+                            "numerical": {
+                                "dec": 3,
+                                "hex": "0x0000000000000003"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: invalid digit for selected base",
+                            "numerical": {
+                                "dec": 4,
+                                "hex": "0x0000000000000004"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: number string is too large",
+                            "numerical": {
+                                "dec": 5,
+                                "hex": "0x0000000000000005"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: negative value cannot convert to unsigned type",
+                            "numerical": {
+                                "dec": 6,
+                                "hex": "0x0000000000000006"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: number does not fit target integer type",
+                            "numerical": {
+                                "dec": 7,
+                                "hex": "0x0000000000000007"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: number does not fit target signed integer type",
+                            "numerical": {
+                                "dec": 8,
+                                "hex": "0x0000000000000008"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: negative raw floating-point bit pattern is invalid",
+                            "numerical": {
+                                "dec": 9,
+                                "hex": "0x0000000000000009"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: raw floating-point bit pattern does not fit target type",
+                            "numerical": {
+                                "dec": 10,
+                                "hex": "0x000000000000000A"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: invalid floating-point number string",
+                            "numerical": {
+                                "dec": 11,
+                                "hex": "0x000000000000000B"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: floating-point number is out of range",
+                            "numerical": {
+                                "dec": 12,
+                                "hex": "0x000000000000000C"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: floating-point number does not fit target type",
+                            "numerical": {
+                                "dec": 13,
+                                "hex": "0x000000000000000D"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: cannot convert NaN or infinity to integer",
+                            "numerical": {
+                                "dec": 14,
+                                "hex": "0x000000000000000E"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: floating-point value is not an integer",
+                            "numerical": {
+                                "dec": 15,
+                                "hex": "0x00000000000000F"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: negative value cannot convert to unsigned type",
+                            "numerical": {
+                                "dec": 16,
+                                "hex": "0x000000000000010"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.invalid_input",
+                            "msg": "invalid input: number does not fit target floating-point type",
+                            "numerical": {
+                                "dec": 17,
+                                "hex": "0x000000000000011"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uuid_invalid",
+                            "msg": "invalid input: encode a UUID using data wider than 256bits",
+                            "numerical": {
+                                "dec": 18,
+                                "hex": "0x000000000000012"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.uuid_invalid",
+                            "msg": "invalid input: assign an invalid UUID string",
+                            "numerical": {
+                                "dec": 19,
+                                "hex": "0x000000000000013"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.encryption_invalid",
+                            "msg": "invalid input: empty key token",
+                            "numerical": {
+                                "dec": 20,
+                                "hex": "0x000000000000014"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.encryption_invalid",
+                            "msg": "invalid input: invalid ciphertext",
+                            "numerical": {
+                                "dec": 21,
+                                "hex": "0x000000000000015"
+                            },
+                            "stack_call": []
+                        }
+                    ]
+                }
+            },
+            {
+                "description": {
+                    "identifier": "model_application"
+                },
+                "components": {
+                    "error_code_checking_and_correction": [
+                        {
+                            "id": "exception.file_system",
+                            "msg": "invalid file: Invalid Executable File",
+                            "numerical": {
+                                "dec": 0,
+                                "hex": "0x0000000000000000"
+                            },
+                            "stack_call": []
+                        },                    
+                        {
+                            "id": "exception.file_system",
+                            "msg": "invalid file: missing executable file",
+                            "numerical": {
+                                "dec": 1,
+                                "hex": "0x0000000000000001"
+                            },
+                            "stack_call": []
+                        }                 
+                    ]
+                }
+            },
+            {
+                "description": {
+                    "identifier": "global.format_json_preprocessor_editor"
+                },
+                "components": {
+                    "error_code_checking_and_correction": [
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: invalid datatype input",
+                            "numerical": {
+                                "dec": 0,
+                                "hex": "0x0000000000000000"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: reading null",
+                            "numerical": {
+                                "dec": 1,
+                                "hex": "0x0000000000000001"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: parent object traversal out of bound",
+                            "numerical": {
+                                "dec": 2,
+                                "hex": "0x0000000000000002"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: parent object traversal out of bound, undeflow",
+                            "numerical": {
+                                "dec": 3,
+                                "hex": "0x0000000000000003"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: key not found",
+                            "numerical": { 
+                                "dec": 4, 
+                                "hex": "0x0000000000000004" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: index out of bounds",
+                            "numerical": { 
+                                "dec": 5, 
+                                "hex": "0x0000000000000005" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: invalid data type operation",
+                            "numerical": { 
+                                "dec": 6, 
+                                "hex": "0x0000000000000006" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: element is not an object",
+                            "numerical": { 
+                                "dec": 7, 
+                                "hex": "0x0000000000000007" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: element is not an array",
+                            "numerical": { 
+                                "dec": 8, 
+                                "hex": "0x0000000000000008" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: cannot open file to read",
+                            "numerical": { 
+                                "dec": 9, 
+                                "hex": "0x0000000000000009" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: invalid handle or logic error",
+                            "numerical": { 
+                                "dec": 10, 
+                                "hex": "0x000000000000000A" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: json parse error or missing section_data",
+                            "numerical": { 
+                                "dec": 11,
+                                "hex": "0x000000000000000B" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: cannot open file to write",
+                            "numerical": { 
+                                "dec": 12, 
+                                "hex": "0x000000000000000C" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: rename failed - key already exists",
+                            "numerical": { 
+                                "dec": 13, 
+                                "hex": "0x000000000000000D" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: rename failed - cannot rename root element",
+                            "numerical": { 
+                                "dec": 14, 
+                                "hex": "0x000000000000000E" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.format_json",
+                            "msg": "format_json: rename failed - cannot rename array element",
+                            "numerical": { 
+                                "dec": 15, 
+                                "hex": "0x000000000000000F" 
+                            },
+                            "stack_call": []
+                        }
+                    ]
+                }
+            },
+            {
+                "description": {
+                    "identifier": "global.command_processor"
+                },
+                "components": {
+                    "error_code_checking_and_correction": [
+                        {
+                            "id": "criditical.startup_failed",
+                            "msg": "Fatal Error: This program requires a companion application to function properly. Please ensure all dependent modules are installed.",
+                            "numerical": {
+                                "dec": 0,
+                                "hex": "0x0000000000000000"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 7 0"
+                            ]
+                        },
+                        {
+                            "id": "criditical.startup_failed",
+                            "msg": "Fatal Error: connect host failed. timeout",
+                            "numerical": {
+                                "dec": 1,
+                                "hex": "0x0000000000000001"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 7 1"
+                            ]
+                        },
+                        {
+                            "id": "criditical.startup_failed",
+                            "msg": "Fatal Error: invalid protocols",
+                            "numerical": {
+                                "dec": 2,
+                                "hex": "0x0000000000000002"
+                            },
+                            "stack_call": [
+                                "thrw --type=\"bsod_expt\" 7 2"
+                            ]
+                        },
+                        {
+                            "id": "exception.failsafe",
+                            "msg": "Fatal Error: device was forcefully stop. exit command",
+                            "numerical": {
+                                "dec": 3,
+                                "hex": "0x0000000000000003"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.failsafe",
+                            "msg": "Fatal Error: IO isn't ready yet",
+                            "numerical": {
+                                "dec": 4,
+                                "hex": "0x0000000000000004"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.failsafe",
+                            "msg": "Fatal Error: unexist directory",
+                            "numerical": {
+                                "dec": 5,
+                                "hex": "0x0000000000000005"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.failsafe",
+                            "msg": "Fatal Error: directory isn't a folder",
+                            "numerical": {
+                                "dec": 6,
+                                "hex": "0x0000000000000006"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.failsafe",
+                            "msg": "Exception: unexist account",
+                            "numerical": {
+                                "dec": 7,
+                                "hex": "0x0000000000000007"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.failsafe",
+                            "msg": "Exception: incorrect password",
+                            "numerical": {
+                                "dec": 8,
+                                "hex": "0x0000000000000008"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.return_value",
+                            "msg": "format: invalid datatype input",
+                            "numerical": {
+                                "dec": 9,
+                                "hex": "0x0000000000000009"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.return_value",
+                            "msg": "format: reading null",
+                            "numerical": {
+                                "dec": 10,
+                                "hex": "0x000000000000000A"
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.return_value",
+                            "msg": "format: index out of bounds",
+                            "numerical": { 
+                                "dec": 11, 
+                                "hex": "0x000000000000000B" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.return_value",
+                            "msg": "format: invalid data type operation",
+                            "numerical": { 
+                                "dec": 12, 
+                                "hex": "0x000000000000000C" 
+                            },
+                            "stack_call": []
+                        },
+                        {
+                            "id": "exception.return_value",
+                            "msg": "format_json: element is not an array",
+                            "numerical": { 
+                                "dec": 13, 
+                                "hex": "0x000000000000000D" 
+                            },
+                            "stack_call": []
+                        }
+                    ]
+                }
+            }
+        ]
+    }
+}
