@@ -82,6 +82,9 @@
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <OutDir>$(SolutionDir)\Program Execute Files</OutDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -205,8 +208,8 @@
       <ExpandAttributedSource>false</ExpandAttributedSource>
       <AssemblerOutput>AssemblyCode</AssemblerOutput>
       <UseUnicodeForAssemblerListing>true</UseUnicodeForAssemblerListing>
-      <GenerateXMLDocumentationFiles>true</GenerateXMLDocumentationFiles>
-      <GenerateSourceDependencies>true</GenerateSourceDependencies>
+      <GenerateXMLDocumentationFiles>false</GenerateXMLDocumentationFiles>
+      <GenerateSourceDependencies>false</GenerateSourceDependencies>
       <UseDynamicDebugging>false</UseDynamicDebugging>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <WholeProgramOptimization>false</WholeProgramOptimization>
@@ -214,7 +217,7 @@
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>false</GenerateDebugInformation>
     </Link>
     <Manifest>
       <EnableSegmentHeap>true</EnableSegmentHeap>
@@ -222,9 +225,6 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="registry_editor host.cpp" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="registry_editor_modifier.py" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

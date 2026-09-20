@@ -103,10 +103,15 @@
 #include <fstream>
 
 #define NO_CHECK_VALID
+#define RECOVERY
+#define CONFIRMED_CAUTION
 
 #include "../../Program Libraries/registry_editor/registry_editor-service-local.h"
 
 #undef NO_CHECK_VALID
+#undef RECOVERY
+#undef CONFIRMED_CAUTION
+
 #ifdef _WIN32
 
 #ifndef WIN32_LEAN_AND_MEAN
@@ -1154,8 +1159,8 @@ int main() {
         std::vector<std::string> files;
         {
             std::error_code ec;
-            if (std::filesystem::exists("../../Program Datas/log/recovery-log/registry-editor-recovery-log", ec)) {
-                for (const auto& entry : std::filesystem::directory_iterator("../../Program Datas/log/recovery-log/registry-editor-recovery-log"))
+            if (std::filesystem::exists("../Program Datas/recovery-log", ec)) {
+                for (const auto& entry : std::filesystem::directory_iterator("../Program Datas/recovery-log"))
                 {
                     files.push_back(entry.path().generic_string());
                 }
@@ -1347,37 +1352,23 @@ int main() {
         // if (logcall) platform_core::recorder::recording_log_end(global_log);
         return 1;
     }
-    {
-        auto close_port = std::make_shared<platform_core::connector>(platform_core::connector::connector_begin("127.0.0.3", 2));
-        try {
-            close_port->connect("127.0.0.3", 1);
+    utilityX::initiate([&stop_requested, &server_socket] {
+        platform_core::connector close_port = platform_core::connector::connector_begin("127.0.0.3", 2);
+        close_port.listener(1);
+        close_port.disconnect();
+        platform_core::connector::connector_end(close_port);
+        stop_requested.store(true);
 
-            if (close_port->is_connected()) {
-                std::thread([close_port, &stop_requested, &server_socket] {
-                    close_port->listener(1);
-                    close_port->disconnect();
-                    platform_core::connector::connector_end(*close_port);
-                    stop_requested.store(true);
-
-                    SOCKET s = server_socket.exchange(INVALID_SOCKET);
-                    if (s != INVALID_SOCKET) {
+        SOCKET s = server_socket.exchange(INVALID_SOCKET);
+        if (s != INVALID_SOCKET) {
 #ifdef _WIN32
-                        shutdown(s, SD_BOTH);
+            shutdown(s, SD_BOTH);
 #else
-                        shutdown(s, SHUT_RDWR);
+            shutdown(s, SHUT_RDWR);
 #endif
-                        CLOSE_SOCKET(s);
-                    }
-                    }).detach();
-            }
-            else {
-                platform_core::connector::connector_end(*close_port);
-            }
+            CLOSE_SOCKET(s);
         }
-        catch (...) {
-
-        }
-    }
+        });
 
     while (!stop_requested.load()) {
         sockaddr_in client_addr{};

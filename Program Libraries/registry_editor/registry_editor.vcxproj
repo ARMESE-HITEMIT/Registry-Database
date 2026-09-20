@@ -139,6 +139,7 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="registry_database_host_controller.h" />
     <ClInclude Include="registry_editor-service-local.h" />
     <ClInclude Include="registry_editor.h" />
   </ItemGroup>

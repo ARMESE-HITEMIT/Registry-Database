@@ -10,6 +10,11 @@
   <Folder Name="/root/Program Datas/" />
   <Folder Name="/root/Program files/">
     <Project Path="Program Files/registry_editor host/registry_editor host.vcxproj" Id="2862a06d-d446-44e0-b5f4-c2445f549f0c" />
+    <Project Path="Program Files/registry_editor_dynamic_library/registry_editor_dynamic_library.vcxproj" Id="c1bef074-b458-491d-b1bb-2732831c6fdb" />
+    <Project Path="Program Files/registry_editor_service_local_dynamic_library/registry_editor_service_local_dynamic_library.vcxproj" Id="9f22340a-ad87-4fa8-b3d3-b088a1a9c15a" />
+    <Project Path="Program Files/registry_editor_service_local_static_library/registry_editor_service_local_static_library.vcxproj" Id="d48fdf5f-ce39-4920-8c7f-434fa796f7d1" />
+    <Project Path="Program Files/registry_editor_static_library/registry_editor_static_library.vcxproj" Id="477324aa-cd6a-42ff-a737-4ef9f36e0313" />
+    <Project Path="Program Files/shell_registry_editor/shell_registry_editor.vcxproj" Id="140d870d-df83-4011-b19e-cac414cdbbac" />
   </Folder>
   <Folder Name="/root/Program Libraries/">
     <Project Path="Program Libraries/registry_editor/registry_editor.vcxproj" Id="a6659ab6-29a6-4165-a9f3-be026dc7692c" />

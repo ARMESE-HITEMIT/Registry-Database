@@ -21,5 +21,8 @@
     <ClInclude Include="registry_editor-service-local.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="registry_database_host_controller.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

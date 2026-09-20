@@ -633,6 +633,63 @@ namespace utilityX {
         }
     };
 
+    bool test_netconnection(const std::string& ip, DWORD port)
+    {
+#ifdef _WIN32
+
+        static bool wsa_initialized = []()
+            {
+                WSADATA wsa{};
+                return WSAStartup(MAKEWORD(2, 2), &wsa) == 0;
+            }();
+
+        if (!wsa_initialized)
+            return false;
+#endif
+
+        if (port > 65535)
+            return false;
+
+        const int sock = static_cast<int>(
+#ifdef _WIN32
+            socket(AF_INET, SOCK_STREAM, IPPROTO_TCP)
+#else
+            socket(AF_INET, SOCK_STREAM, 0)
+#endif
+            );
+
+        if (sock < 0)
+            return false;
+
+        sockaddr_in address{};
+        address.sin_family = AF_INET;
+        address.sin_port = htons(static_cast<std::uint16_t>(port));
+
+        if (inet_pton(AF_INET, ip.c_str(), &address.sin_addr) != 1)
+        {
+#ifdef _WIN32
+            closesocket(sock);
+#else
+            close(sock);
+#endif
+            return false;
+        }
+
+        const int result = connect(
+            sock,
+            reinterpret_cast<const sockaddr*>(&address),
+            sizeof(address)
+        );
+
+#ifdef _WIN32
+        closesocket(sock);
+#else
+        close(sock);
+#endif
+
+        return result == 0;
+    }
+
     inline bool terminate(const process_handle& handle)
     {
         if (!handle.valid())

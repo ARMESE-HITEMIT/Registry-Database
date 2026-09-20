@@ -38,6 +38,12 @@
 // 
 // -- -
 
+#ifndef CONFIRMED_CAUTION
+
+#error USING REGISTRY EDITOR SERVICE LOCAL WITHOUT HOST MAY LOSE DATA IN CASE OF CRASH OR POWER FAILURE. USE WITH CAUTION. define "CONFIRMED_CAUTION" to bypass this warning
+
+#endif
+
 #pragma message(" *	Registry Editor Library")
 #pragma message(" *")
 #pragma message(" *	Copyright (c) 2022 RANDOM ARMESE HITEMIT - REGISTRY EDITOR")
@@ -228,7 +234,7 @@ namespace registry_editor_service_local {
     inline std::shared_mutex mtxs;
 
     PACK_PUSH_1
-    struct file_system {
+        struct file_system {
         using storage_map = ankerl::unordered_dense::map<std::string, file_system>;
         union {
             BYTE b;
@@ -702,7 +708,7 @@ namespace registry_editor_service_local {
     };
     PACK_POP
 
-    struct INIT_KEY {
+        struct INIT_KEY {
         std::string id;
     };
 
@@ -737,12 +743,12 @@ namespace registry_editor_service_local {
         using string_table = std::vector<const std::string*>;
         using string_id_map = ankerl::unordered_dense::map<const std::string*, QWORD>;
 
-        static constexpr QWORD MAX_ROOT_COUNT           = -1;
-        static constexpr QWORD MAX_CHILD_COUNT          = -1;
-        static constexpr QWORD MAX_KEY_LENGTH           = -1;
-        static constexpr QWORD MAX_STRING_LENGTH        = -1;
+        static constexpr QWORD MAX_ROOT_COUNT = -1;
+        static constexpr QWORD MAX_CHILD_COUNT = -1;
+        static constexpr QWORD MAX_KEY_LENGTH = -1;
+        static constexpr QWORD MAX_STRING_LENGTH = -1;
         static constexpr QWORD MAX_STRING_SECTION_COUNT = -1;
-        static constexpr QWORD INVALID_STRING_ID        = -1;
+        static constexpr QWORD INVALID_STRING_ID = -1;
 
         inline static constexpr char FORMAT_SIGNATURE[] =
             "Copyright (c) 2022 RANDOM ARMESE HITEMIT - REGISTRY EDITOR LIBRARY - REGISTRY EDITOR FORMAT DATA SYSTEM\n"
@@ -976,7 +982,7 @@ namespace registry_editor_service_local {
                         if (id >= static_cast<QWORD>(string_section.size()))
                             throw platform_core::ecc{ 2, 11 };
                         return string_section[static_cast<size_t>(id)];
-                    }());
+                        }());
 
                     QWORD child_count;
                     read_pod(f, child_count);
@@ -1564,15 +1570,16 @@ namespace registry_editor_service_local {
         std::shared_mutex clsmtx;
         ankerl::unordered_dense::map<QWORD, std::function<void()>> listeners;
         std::vector<QWORD> used_ids;
-    public:
-        std::ofstream files;
         std::string registry_file_name;
+#ifdef RECOVERY
+        std::ofstream files;
         std::string recovery_file_path;
+#endif
     private:
         roots* root;
         friend registry_editor_service_local* registry_begin(const std::string& path_to_registry_file);
         friend void registry_end(registry_editor_service_local* editor);
-
+#ifdef RECOVERY
         registry_editor_service_local(const std::string& path_to_registry_file, const std::string& recovery_file)
             : root(nullptr)
         {
@@ -1589,6 +1596,21 @@ namespace registry_editor_service_local {
                 throw;
             }
         }
+#else
+        registry_editor_service_local(const std::string& path_to_registry_file)
+            : root(nullptr)
+        {
+            try {
+                registry_file_name = path_to_registry_file;
+                root = roots::load_from_disk(path_to_registry_file);
+            }
+            catch (...) {
+                delete root;
+                root = nullptr;
+                throw;
+            }
+        }
+#endif
         ~registry_editor_service_local() {
             delete root;
         };
@@ -1782,7 +1804,7 @@ namespace registry_editor_service_local {
                 throw platform_core::ecc{ 2, 6 };
             node.qw = value;
         }
-
+#ifdef RECOVERY
         template<typename Mutator, typename Logger>
         inline void atomic_batch(const std::string& keyname_path, Mutator mutator, Logger logger)
         {
@@ -1799,23 +1821,36 @@ namespace registry_editor_service_local {
             logger();
             files.flush();
         }
+#else
+        template<typename Mutator>
+        inline void atomic_batch(const std::string& keyname_path, Mutator mutator)
+        {
+            std::unique_lock<std::shared_mutex> lock(mutex);
+            registry_storage& target = ensure_storage_for_path(keyname_path);
+            registry_storage backup = target;
+            try {
+                mutator(target);
+            }
+            catch (...) {
+                target = std::move(backup);
+                throw;
+            }
+        }
+#endif
     public:
         void save()
         {
-            {
-                std::shared_lock<std::shared_mutex> lock(mutex);
-                if (root) roots::save_to_disk(registry_file_name, *root);
-            }
+            std::shared_lock<std::shared_mutex> lock(mutex);
+            if (root) roots::save_to_disk(registry_file_name, *root);
+#ifdef RECOVERY
             files.close();
             {
-                std::ofstream out(
-                    recovery_file_path,
-                    std::ios::out | std::ios::trunc
-                );
+                std::ofstream out(recovery_file_path, std::ios::out | std::ios::trunc);
                 out << registry_file_name << '\n';
                 out.close();
             }
             files.open(recovery_file_path, std::ios::out | std::ios::app);
+#endif
         }
         inline void create_key(const std::string& key_name, const std::string& keyname_path)
         {
@@ -1828,8 +1863,10 @@ namespace registry_editor_service_local {
                 auto [it, inserted] = target.try_emplace(key_name);
                 if (!inserted)
                     throw platform_core::ecc{ 2, 9 };
+#ifdef RECOVERY
                 files << "\"1\"|" << '"' << key_name << '"' << "|" << '"' << keyname_path << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -1847,8 +1884,10 @@ namespace registry_editor_service_local {
                     auto [it, inserted] = target.try_emplace(value_name, value_data);
                     if (!inserted)
                         throw platform_core::ecc{ 2, 9 };
+#ifdef RECOVERY
                     files << "\"2\"|" << '"' << value_name << '"' << '|' << '"' << value_data << '"' << '|' << '"' << keyname_path << '"' << '\n';
                     files.flush();
+#endif
                 }
                 notify_update();
             }
@@ -1873,8 +1912,10 @@ namespace registry_editor_service_local {
                 auto [it, inserted] = target.try_emplace(value_name, value_data);
                 if (!inserted)
                     throw platform_core::ecc{ 2, 9 };
+#ifdef RECOVERY
                 files << "\"3\"|" << '"' << value_name << '"' << '|' << '"' << std::to_string(value_data) << '"' << '|' << '"' << keyname_path << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -1890,8 +1931,10 @@ namespace registry_editor_service_local {
                 auto [it, inserted] = target.try_emplace(value_name, value_data);
                 if (!inserted)
                     throw platform_core::ecc{ 2, 9 };
+#ifdef RECOVERY
                 files << "\"4\"|" << '"' << value_name << '"' << '|' << '"' << std::to_string(value_data) << '"' << '|' << '"' << keyname_path << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -1907,8 +1950,10 @@ namespace registry_editor_service_local {
                 auto [it, inserted] = target.try_emplace(value_name, value_data);
                 if (!inserted)
                     throw platform_core::ecc{ 2, 9 };
+#ifdef RECOVERY
                 files << "\"5\"|" << '"' << value_name << '"' << '|' << '"' << std::to_string(value_data) << '"' << '|' << '"' << keyname_path << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -1924,8 +1969,10 @@ namespace registry_editor_service_local {
                 auto [it, inserted] = target.try_emplace(value_name, value_data);
                 if (!inserted)
                     throw platform_core::ecc{ 2, 9 };
+#ifdef RECOVERY
                 files << "\"6\"|" << '"' << value_name << '"' << '|' << '"' << std::to_string(value_data) << '"' << '|' << '"' << keyname_path << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -1940,8 +1987,10 @@ namespace registry_editor_service_local {
                     std::unique_lock<std::shared_mutex> lock(mutex);
                     registry_storage& target = ensure_storage_for_path(keyname_path);
                     assign_value(require_child(target, value_name), new_value);
+#ifdef RECOVERY
                     files << "\"7\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << new_value << '"' << '\n';
                     files.flush();
+#endif
                 }
                 notify_update();
             }
@@ -1963,8 +2012,10 @@ namespace registry_editor_service_local {
                 std::unique_lock<std::shared_mutex> lock(mutex);
                 registry_storage& target = ensure_storage_for_path(keyname_path);
                 assign_byte(require_child(target, value_name), new_byte);
+#ifdef RECOVERY
                 files << "\"8\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << std::to_string(new_byte) << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -1977,8 +2028,10 @@ namespace registry_editor_service_local {
                 std::unique_lock<std::shared_mutex> lock(mutex);
                 registry_storage& target = ensure_storage_for_path(keyname_path);
                 assign_word(require_child(target, value_name), new_word);
+#ifdef RECOVERY
                 files << "\"9\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << std::to_string(new_word) << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -1990,8 +2043,10 @@ namespace registry_editor_service_local {
                 std::unique_lock<std::shared_mutex> lock(mutex);
                 registry_storage& target = ensure_storage_for_path(keyname_path);
                 assign_dword(require_child(target, value_name), new_dword);
+#ifdef RECOVERY
                 files << "\"10\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << std::to_string(new_dword) << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -2004,8 +2059,10 @@ namespace registry_editor_service_local {
                 std::unique_lock<std::shared_mutex> lock(mutex);
                 registry_storage& target = ensure_storage_for_path(keyname_path);
                 assign_qword(require_child(target, value_name), new_qword);
+#ifdef RECOVERY
                 files << "\"11\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << std::to_string(new_qword) << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -2130,8 +2187,10 @@ namespace registry_editor_service_local {
                     target = std::move(backup);
                     throw;
                 }
+#ifdef RECOVERY
                 files << "\"12\"|" << '"' << keyname_path << '"' << '|' << '"' << old_name << '"' << '|' << '"' << new_name << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -2168,11 +2227,14 @@ namespace registry_editor_service_local {
                         if (!inserted)
                             throw platform_core::ecc{ 2, 9 };
                     }
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& key_name : list_of_key_name)
                         files << "\"1\"|" << '"' << key_name << '"' << "|" << '"' << keyname_path << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2190,11 +2252,14 @@ namespace registry_editor_service_local {
                             if (!inserted)
                                 throw platform_core::ecc{ 2, 9 };
                         }
-                    },
-                    [&]() {
+                    }
+#ifdef RECOVERY
+                    , [&]() {
                         for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                             files << "\"2\"|" << '"' << value_name << '"' << '|' << '"' << value_data << '"' << '|' << '"' << keyname_path << '"' << '\n';
-                    });
+                    }
+#endif
+                );
                 notify_update();
             }
             catch (const std::bad_alloc&)
@@ -2219,11 +2284,14 @@ namespace registry_editor_service_local {
                         if (!inserted)
                             throw platform_core::ecc{ 2, 9 };
                     }
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         files << "\"3\"|" << '"' << value_name << '"' << '|' << '"' << std::to_string(value_data) << '"' << '|' << '"' << keyname_path << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2239,11 +2307,14 @@ namespace registry_editor_service_local {
                         if (!inserted)
                             throw platform_core::ecc{ 2, 9 };
                     }
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         files << "\"4\"|" << '"' << value_name << '"' << '|' << '"' << std::to_string(value_data) << '"' << '|' << '"' << keyname_path << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2259,11 +2330,14 @@ namespace registry_editor_service_local {
                         if (!inserted)
                             throw platform_core::ecc{ 2, 9 };
                     }
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         files << "\"5\"|" << '"' << value_name << '"' << '|' << '"' << std::to_string(value_data) << '"' << '|' << '"' << keyname_path << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2279,11 +2353,14 @@ namespace registry_editor_service_local {
                         if (!inserted)
                             throw platform_core::ecc{ 2, 9 };
                     }
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         files << "\"6\"|" << '"' << value_name << '"' << '|' << '"' << std::to_string(value_data) << '"' << '|' << '"' << keyname_path << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2298,11 +2375,14 @@ namespace registry_editor_service_local {
                     [&](registry_storage& target) {
                         for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                             assign_value(require_child(target, value_name), value_data);
-                    },
-                    [&]() {
+                    }
+#ifdef RECOVERY
+                    , [&]() {
                         for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                             files << "\"7\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << value_data << '"' << '\n';
-                    });
+                    }
+#endif
+                );
                 notify_update();
             }
             catch (const std::bad_alloc&)
@@ -2324,11 +2404,14 @@ namespace registry_editor_service_local {
                 [&](registry_storage& target) {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         assign_byte(require_child(target, value_name), value_data);
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         files << "\"8\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << std::to_string(value_data) << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2341,11 +2424,14 @@ namespace registry_editor_service_local {
                 [&](registry_storage& target) {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         assign_word(require_child(target, value_name), value_data);
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         files << "\"9\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << std::to_string(value_data) << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2358,11 +2444,14 @@ namespace registry_editor_service_local {
                 [&](registry_storage& target) {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         assign_dword(require_child(target, value_name), value_data);
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         files << "\"10\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << std::to_string(value_data) << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2375,11 +2464,14 @@ namespace registry_editor_service_local {
                 [&](registry_storage& target) {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         assign_qword(require_child(target, value_name), value_data);
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& [value_name, value_data] : list_of_value_name_and_data)
                         files << "\"11\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '|' << '"' << std::to_string(value_data) << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2505,11 +2597,14 @@ namespace registry_editor_service_local {
                         target.erase(it);
                         target.emplace(new_name, std::move(temp_node));
                     }
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& [old_name, new_name] : list_of_name)
                         files << "\"12\"|" << '"' << keyname_path << '"' << '|' << '"' << old_name << '"' << '|' << '"' << new_name << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2577,8 +2672,10 @@ namespace registry_editor_service_local {
                 registry_storage& target = storage_for_path(keyname_path);
                 if (target.erase(value_name) == 0)
                     throw platform_core::ecc{ 2, 1 };
+#ifdef RECOVERY
                 files << "\"13\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '\n';
                 files.flush();
+#endif
             }
             notify_update();
         }
@@ -2635,11 +2732,14 @@ namespace registry_editor_service_local {
                         if (target.erase(value_name) == 0)
                             throw platform_core::ecc{ 2, 1 };
                     }
-                },
-                [&]() {
+                }
+#ifdef RECOVERY
+                , [&]() {
                     for (const auto& value_name : list_of_value_name)
                         files << "\"13\"|" << '"' << value_name << '"' << '|' << '"' << keyname_path << '"' << '\n';
-                });
+                }
+#endif
+            );
             notify_update();
         }
 
@@ -2685,17 +2785,17 @@ namespace registry_editor_service_local {
 
             auto type_id = [](const auto& data) -> const char* {
                 if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_KEY>)
-                    return "0";
-                else if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_VALUE>)
                     return "1";
-                else if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_BYTE>)
+                else if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_VALUE>)
                     return "2";
-                else if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_WORD>)
+                else if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_BYTE>)
                     return "3";
-                else if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_DWORD>)
+                else if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_WORD>)
                     return "4";
-                else
+                else if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_DWORD>)
                     return "5";
+                else // INIT_QWORD
+                    return "6";
                 };
 
             bool has_string_value = false;
@@ -2744,19 +2844,22 @@ namespace registry_editor_service_local {
                                     throw platform_core::ecc{ 2, 9 };
                                 }, value_data);
                         }
-                    },
-                    [&]() {
+                    }
+#ifdef RECOVERY
+                    , [&]() {
                         for (const auto& value_data : list_of_value_name_and_data) {
                             std::visit([&](const auto& data) {
                                 if constexpr (std::is_same_v<std::decay_t<decltype(data)>, INIT_KEY>) {
-                                    files << '"' << type_id(data) << '"' << '|' << '"' << data.id << '"' << '|' << '"' << "" << '"' << '|' << '"' << keyname_path << '"' << '\n';
+                                    files << '"' << type_id(data) << '"' << '|' << '"' << data.id << '"' << '|' << '"' << keyname_path << '"' << '\n';
                                 }
                                 else {
                                     files << '"' << type_id(data) << '"' << '|' << '"' << data.id << '"' << '|' << '"' << to_file_string(data.value) << '"' << '|' << '"' << keyname_path << '"' << '\n';
                                 }
                                 }, value_data);
                         }
-                    });
+                    }
+#endif
+                );
                 notify_update();
             }
             catch (const std::bad_alloc&)
@@ -3089,10 +3192,13 @@ namespace registry_editor_service_local {
 
         registry_editor_service_local* returneds = nullptr;
         namespace fs = std::filesystem;
+#ifdef RECOVERY
         std::string rcvaffr;
+#endif
         try {
+#ifdef RECOVERY
             {
-                fs::path folder = "../../Program Datas/log/recovery-log/registry-editor-recovery-log";
+                fs::path folder = "../Program Datas/recovery-log";
                 std::string base = "recovery";
                 std::string ext = ".rcvaffr";
                 QWORD index = 0;
@@ -3103,13 +3209,16 @@ namespace registry_editor_service_local {
                         : base + "_" + std::to_string(index) + ext;
                     if (!fs::exists(folder / name))
                     {
-                        rcvaffr = registry_normalize_path(("../../Program Datas/log/recovery-log/registry-editor-recovery-log/" + name));
+                        rcvaffr = registry_normalize_path(("../Program Datas/recovery-log/" + name));
                         break;
                     }
                     ++index;
                 }
             }
             returneds = new registry_editor_service_local(path_to_registry_file, rcvaffr);
+#else
+            returneds = new registry_editor_service_local(path_to_registry_file);
+#endif
             returned.emplace(
                 returneds->registry_file_name,
                 std::pair<registry_editor_service_local*, QWORD>(
@@ -3154,8 +3263,10 @@ namespace registry_editor_service_local {
         }
 
         editor->save();
+#ifdef RECOVERY
         editor->files.close();
         std::filesystem::remove(editor->recovery_file_path);
+#endif
         returned.erase(editor->registry_file_name);
         delete editor;
     }

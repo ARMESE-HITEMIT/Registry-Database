@@ -25,9 +25,4 @@
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="registry_editor_modifier.py">
-      <Filter>Source Files</Filter>
-    </None>
-  </ItemGroup>
 </Project>
