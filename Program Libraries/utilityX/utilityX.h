@@ -106,6 +106,7 @@
 #include <random>
 #include <stdexcept>
 #include <limits>
+#include <cstdint>
 
 #ifdef _WIN32
 #ifndef WIN32_LEAN_AND_MEAN
@@ -135,6 +136,15 @@
 #undef NO_CONNECTOR
 #undef NO_RECORDER
 #undef NO_ERROR_LOOKINGUP
+
+typedef uint64_t QWORD;
+typedef uint8_t BYTE;
+
+#ifdef _WIN32
+typedef HANDLE FileHandle;
+#else
+typedef int FileHandle;
+#endif
 
 namespace utilityX {
     namespace detail {
@@ -1163,7 +1173,60 @@ namespace utilityX {
 #endif
         }
     }
+    namespace filesystem {
+        FileHandle open_file(const char* path) {
+#ifdef _WIN32
+            return CreateFileA(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+#else
+            return open(path, O_RDWR | O_CREAT, 0644);
+#endif
+        }
 
+        void fetch_chunk(FileHandle handle, BYTE* buffer, QWORD* chunk_size, QWORD page_id) {
+#ifdef _WIN32
+            SYSTEM_INFO sys_info;
+            GetSystemInfo(&sys_info);
+            *chunk_size = static_cast<QWORD>(sys_info.dwPageSize);
+
+            OVERLAPPED ov = { 0 };
+            QWORD offset = page_id * (*chunk_size);
+            ov.Offset = static_cast<DWORD>(offset & 0xFFFFFFFF);
+            ov.OffsetHigh = static_cast<DWORD>(offset >> 32);
+
+            DWORD bytes_read;
+            ReadFile(handle, buffer, static_cast<DWORD>(*chunk_size), &bytes_read, &ov);
+#else
+            * os_chunk_size = static_cast<QWORD>(sysconf(_SC_PAGESIZE));
+            QWORD offset = page_id * (*os_chunk_size);
+            pread(handle, buffer, *os_chunk_size, offset);
+#endif
+        }
+
+        void flush_chunk(FileHandle handle, const BYTE* buffer, QWORD chunk_size, QWORD page_id) {
+#ifdef _WIN32
+            OVERLAPPED ov = { 0 };
+            QWORD offset = page_id * chunk_size;
+            ov.Offset = static_cast<DWORD>(offset & 0xFFFFFFFF);
+            ov.OffsetHigh = static_cast<DWORD>(offset >> 32);
+
+            DWORD bytes_written;
+            WriteFile(handle, buffer, static_cast<DWORD>(chunk_size), &bytes_written, &ov);
+#else
+            QWORD offset = page_id * chunk_size;
+            pwrite(handle, buffer, chunk_size, offset);
+#endif
+        }
+
+        void close_file(FileHandle handle) {
+#ifdef _WIN32
+            FlushFileBuffers(handle);
+            CloseHandle(handle);
+#else
+            fdatasync(handle);
+            close(handle);
+#endif
+        }
+    }
     namespace coder {
 
         class compact_ascii_reference;
