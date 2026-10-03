@@ -1,0 +1,14 @@
+{
+    "version": 1,
+    "revision": 0,
+    "rules": [
+        {
+            "primary-output": "x64\\Release\\Dev-Test.obj",
+            "outputs": [
+                "x64\\Release\\Dev-Test.cpp.obj.dt.module.json",
+                "x64\\Release\\Dev-Test.cpp.obj.dt.d.json"
+            ],
+            "requires": []
+        }
+    ]
+}

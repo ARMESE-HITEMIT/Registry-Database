@@ -1015,29 +1015,11 @@
                             ]
                         },
                         {
-                            "id": "exception.registry_database_host_controller",
-                            "msg": "server: registry database host server is already running",
+                            "id": "exception.registry_database_file",
+                            "msg": "server: registry database file is opened by another program",
                             "numerical": {
                               "dec": 35,
                               "hex": "0x0000000000000023"
-                            },
-                            "stack_call": []
-                        },
-                        {
-                            "id": "exception.registry_database_host_controller",
-                            "msg": "server: registry database host server is already running",
-                            "numerical": {
-                                "dec": 36,
-                                "hex": "0x0000000000000024"
-                            },
-                            "stack_call": []
-                        },
-                        {
-                            "id": "exception.registry_database_host_controller",
-                            "msg": "server: cannot find server host",
-                            "numerical": {
-                                "dec": 37,
-                                "hex": "0x0000000000000025"
                             },
                             "stack_call": []
                         }

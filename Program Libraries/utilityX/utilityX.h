@@ -136,14 +136,14 @@
 #undef NO_CONNECTOR
 #undef NO_RECORDER
 #undef NO_ERROR_LOOKINGUP
-
-typedef uint64_t QWORD;
-typedef uint8_t BYTE;
+#include <cstdint>
 
 #ifdef _WIN32
 typedef HANDLE FileHandle;
+#define FORCE_INLINE __forceinline
 #else
 typedef int FileHandle;
+#define FORCE_INLINE inline __attribute__((always_inline))
 #endif
 
 namespace utilityX {
@@ -1174,56 +1174,100 @@ namespace utilityX {
         }
     }
     namespace filesystem {
-        FileHandle open_file(const char* path) {
+        FORCE_INLINE QWORD page_size() {
+            static QWORD cached_size = 0;
+            if (cached_size) return cached_size;
 #ifdef _WIN32
-            return CreateFileA(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+            SYSTEM_INFO sys_info;
+            GetSystemInfo(&sys_info);
+            return cached_size = static_cast<QWORD>(sys_info.dwPageSize);
+#else
+            return cached_size = static_cast<QWORD>(sysconf(_SC_PAGESIZE));
+#endif
+        }
+
+        FORCE_INLINE FileHandle open_file(const char* path) {
+#ifdef _WIN32
+            return CreateFileA(path, GENERIC_READ | GENERIC_WRITE, FILE_SHARE_READ, nullptr, OPEN_ALWAYS, FILE_ATTRIBUTE_NORMAL | FILE_FLAG_OVERLAPPED, nullptr);
 #else
             return open(path, O_RDWR | O_CREAT, 0644);
 #endif
         }
 
-        void fetch_chunk(FileHandle handle, BYTE* buffer, QWORD* chunk_size, QWORD page_id) {
+        FORCE_INLINE void fetch_chunk(FileHandle handle, BYTE* buffer, QWORD chunk_size, QWORD page_id) {
 #ifdef _WIN32
-            SYSTEM_INFO sys_info;
-            GetSystemInfo(&sys_info);
-            *chunk_size = static_cast<QWORD>(sys_info.dwPageSize);
-
-            OVERLAPPED ov = { 0 };
-            QWORD offset = page_id * (*chunk_size);
-            ov.Offset = static_cast<DWORD>(offset & 0xFFFFFFFF);
+            QWORD offset = page_id * chunk_size;
+            OVERLAPPED ov{};
+            ov.Offset = static_cast<DWORD>(offset);
             ov.OffsetHigh = static_cast<DWORD>(offset >> 32);
 
             DWORD bytes_read;
-            ReadFile(handle, buffer, static_cast<DWORD>(*chunk_size), &bytes_read, &ov);
+            ReadFile(handle, buffer, static_cast<DWORD>(chunk_size), &bytes_read, &ov);
 #else
-            * os_chunk_size = static_cast<QWORD>(sysconf(_SC_PAGESIZE));
-            QWORD offset = page_id * (*os_chunk_size);
-            pread(handle, buffer, *os_chunk_size, offset);
+            pread(handle, buffer, chunk_size, page_id * chunk_size);
 #endif
         }
 
-        void flush_chunk(FileHandle handle, const BYTE* buffer, QWORD chunk_size, QWORD page_id) {
+        FORCE_INLINE void flush_chunk(FileHandle handle, const BYTE* buffer, QWORD chunk_size, QWORD page_id) {
 #ifdef _WIN32
-            OVERLAPPED ov = { 0 };
             QWORD offset = page_id * chunk_size;
-            ov.Offset = static_cast<DWORD>(offset & 0xFFFFFFFF);
+            OVERLAPPED ov{};
+            ov.Offset = static_cast<DWORD>(offset);
             ov.OffsetHigh = static_cast<DWORD>(offset >> 32);
 
             DWORD bytes_written;
             WriteFile(handle, buffer, static_cast<DWORD>(chunk_size), &bytes_written, &ov);
 #else
-            QWORD offset = page_id * chunk_size;
-            pwrite(handle, buffer, chunk_size, offset);
+            pwrite(handle, buffer, chunk_size, page_id * chunk_size);
 #endif
         }
 
-        void close_file(FileHandle handle) {
+        FORCE_INLINE void close_file(FileHandle handle) {
 #ifdef _WIN32
             FlushFileBuffers(handle);
             CloseHandle(handle);
 #else
             fdatasync(handle);
             close(handle);
+#endif
+        }
+        FORCE_INLINE bool pop_page(FileHandle handle, QWORD chunk_size, QWORD count = 1) {
+            if (count == 0) return true;
+
+#ifdef _WIN32
+            LARGE_INTEGER file_size;
+            if (!GetFileSizeEx(handle, &file_size)) return false;
+
+            QWORD current_size = static_cast<QWORD>(file_size.QuadPart);
+            QWORD remove_size = chunk_size * count;
+
+            if (current_size < remove_size) return false;
+
+            LARGE_INTEGER new_size;
+            new_size.QuadPart = static_cast<LONGLONG>(current_size - remove_size);
+
+            FILE_END_OF_FILE_INFO info{};
+            info.EndOfFile = new_size;
+
+            return SetFileInformationByHandle(
+                handle,
+                FileEndOfFileInfo,
+                &info,
+                sizeof(info)
+            );
+
+#else
+            struct stat st {};
+            if (fstat(handle, &st) != 0) return false;
+
+            QWORD current_size = static_cast<QWORD>(st.st_size);
+            QWORD remove_size = chunk_size * count;
+
+            if (current_size < remove_size) return false;
+
+            off_t new_size = static_cast<off_t>(current_size - remove_size);
+
+            return ftruncate(handle, new_size) == 0;
 #endif
         }
     }
