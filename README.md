@@ -10,6 +10,9 @@ DEV NOTE:
 - include std::exception
 - added iterator
 - new regx format 2.0A
+- added data recovery without server / host (local version)
+- added ahead write log
+- blocking a regx being open by more than one program (without server / local version) prevent data race writing
 
 THIS VERSION WILL CHANGED `registry_editor.h` file format/symbol/function/usuage
 
