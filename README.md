@@ -2,6 +2,22 @@
 
 > **Version:** 2.0A
 
+DEV NOTE:
+- This version store runtime data in binary file (like ram) not memory so u can open & store large file without using many ram (swap & virtual address)
+- Support lock data with password (key, value, byte, word, dword, qword) using encryption (AES-256)
+- Server / Host with custom ip/port
+- fix data safety issues
+- include std::exception
+- added iterator
+- new regx format 2.0A
+- added data recovery without server / host (local version)
+- added ahead write log
+- blocking a regx being open by more than one program (without server / local version) prevent data race writing
+
+THIS VERSION WILL CHANGED `registry_editor.h` file format/symbol/function/usuage
+
+PLEASE NOTE THAT ANY UPDATE VERSION MAY CHANGE FORMATTION OF MMAP OR REGX FILE.
+
 ## License
 
 Copyright (c) 2022 RANDOM ARMESE HITEMIT. <br>
