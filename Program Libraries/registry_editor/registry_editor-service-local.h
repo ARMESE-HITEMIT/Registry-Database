@@ -40,6 +40,156 @@
 
 #pragma once
 
+#define REGISTRY_DATABASE_VERSION       2.0A    // DEV NOTE: VERSION & MEAN
+#define REGISTRY_DATABASE_VERSION_MAJOR 2       // DEV NOTE: THIS REPRESENT A HUGE UPDATE WHICH MAY CHANGE API/ABI OF THE LIBRARY
+#define REGISTRY_DATABASE_VERSION_MINOR 0       // DEV NOTE: FEATURE UPDATE. THIS WILL NOT CHANGE API/ABI OF THE LIBRARY
+#define REGISTRY_DATABASE_VERSION_PATCH A       // DEV NOTE: PATCHING VERSION
+
+#if defined(_MSVC_LANG)
+#    define REGISTRY_DATABASE_CPP_VERSION _MSVC_LANG
+#else
+#    define REGISTRY_DATABASE_CPP_VERSION __cplusplus
+#endif
+
+#if REGISTRY_DATABASE_CPP_VERSION < 201703L
+#   error registry database require C++17 or higher
+#endif
+
+// settings
+/*
+    * NUMBER_OF_PAGE_CACHED:
+    *   Number of pages loaded into the L1 cache per swap operation.
+    *
+    * MMAP_COPY_CHUNK_SIZE:
+    *   Fixed allocation size used for copying and temporary data buffers.
+    *
+    * L2_MAP_MAX_SIZE_ZONES:
+    *   Maximum number of string zones loaded into the L2 map for scanning.
+    *
+    * ALLOC_RESERVE_ZONES:
+    *   Number of zones reserved for the allocation table when reallocating.
+    *
+    * ALLOC_CACHE_SIZE_MAX:
+    *   Maximum number of allocation entries kept in the allocation cache.
+    *
+    * ARRAY_RESERVE_ZONES:
+    *   Number of zones reserved for the element array.
+    *
+    * ARRAY_CACHE_SIZE_MAX:
+    *   Maximum number of element entries kept in the array cache.
+    *
+    * BYTEMAP_RESERVE_ZONES:
+    *   Number of zones reserved for the byte map.
+    
+    SETTING TABLE
+    +----------------------------+----------+-----------------------+-----------+-------------------+---------------------+
+    | NAME OF SETTING            | MINIMUM  | DEFAULT (Recommened)  | BALANCED  | BEST PERFORMANCE  | BEST MEMORY USUAGE  |
+    +----------------------------+----------+-----------------------+-----------+-------------------+---------------------+
+    | NUMBER_OF_PAGE_CACHED      | 1        | 8                     | 4         | 16                | 4                   |
+    | MMAP_COPY_CHUNK_SIZE       | 1024     | 4096                  | 2048      | 8192 - 16384      | 1024                |
+    | L2_MAP_MAX_SIZE_ZONES      | 8        | 32                    | 16        | 32 - 64           | 16                  |
+    | ALLOC_RESERVE_ZONES        | 2        | 16                    | 8         | 16 - 24           | 8                   |
+    | ALLOC_CACHE_SIZE_MAX       | 8        | 32                    | 16        | 64                | 16                  |
+    | ARRAY_RESERVE_ZONES        | 2        | 16                    | 8         | 16 - 24           | 8                   |
+    | ARRAY_CACHE_SIZE_MAX       | 8        | 32                    | 16        | 64                | 16                  |
+    | BYTEMAP_RESERVE_ZONE       | 2        | 16                    | 8         | 16 - 24           | 8                   |
+    +----------------------------+----------+-----------------------+-----------+-------------------+---------------------+
+*/
+#define NUMBER_OF_PAGE_CACHED      8
+#define MMAP_COPY_CHUNK_SIZE       4096
+#define L2_MAP_MAX_SIZE_ZONES      32
+
+#define ALLOC_RESERVE_ZONES        16
+#define ALLOC_CACHE_SIZE_MAX       32
+#define ARRAY_RESERVE_ZONES        16
+#define ARRAY_CACHE_SIZE_MAX       32
+#define BYTEMAP_RESERVE_ZONES      16
+
+//vars DO NOT CHANGE
+#define DOUBLE_QWORD_SIZE          16
+#define TRIPLE_QWORD_SIZE          24
+#define MMAP_KEY_STRUCTURE_SIZE    202 
+
+#if defined(_MSC_VER)
+#   define PACK_PUSH_1 __pragma(pack(push, 1))
+#   define PACK_POP    __pragma(pack(pop))
+#   define PACKED
+#elif defined(__GNUC__) || defined(__clang__)
+#   define PACK_PUSH_1
+#   define PACK_POP
+#   define PACKED __attribute__((packed))
+#else
+#   define PACK_PUSH_1
+#   define PACK_POP
+#   define PACKED
+#endif
+
+// THIS ZONE CHECK SETTING
+
+#if !defined(DEVELOPER_TEST)
+#   if NUMBER_OF_PAGE_CACHED < 1
+#      error SETTINGS ERROR: "NUMBER_OF_PAGE_CACHED" REQUIRE QWORD GREATER THAN 0
+#   endif
+#   if MMAP_COPY_CHUNK_SIZE < 1024
+#      error SETTINGS ERROR: "MMAP_COPY_CHUNK_SIZE" REQUIRE QWORD GREATER THAN OR EQUAL 1024
+#   endif
+#   if L2_MAP_MAX_SIZE_ZONES < 1
+#      error SETTINGS ERROR: "L2_MAP_MAX_SIZE_ZONES" REQUIRE QWORD GREATER THAN 0
+#   elif L2_MAP_MAX_SIZE_ZONES < 16
+#      ifndef REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE
+#          warning SETTINGS WARNING: DUE TO PERFORMANCE THE L2 MAP USEING TO INDEX STRING DATA/KEYNAME REQUIRED 16 STRING ZONE READY IN MEMORY TO SCAN. THE "L2_MAP_MAX_SIZE_ZONES" SHOULD BE GREATER OR EQUAL TO 16. DEFINE "REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE" TO BYPASS THIS WARNING
+#      endif
+#   endif
+#   if ALLOC_RESERVE_ZONES < 1
+#      error SETTINGS ERROR: "ALLOC_RESERVE_ZONES" REQUIRE QWORD GREATER THAN 0
+#   elif ALLOC_RESERVE_ZONES < 8
+#      ifndef REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE
+#          warning SETTINGS WARNING: DUE TO PERFORMANCE THE RESERVING ZONE FOR ALLOCATION TABLE. THE "ALLOC_RESERVE_ZONES" SHOULD BE GREATER OR EQUAL TO 8. DEFINE "REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE" TO BYPASS THIS WARNING
+#      endif
+#   endif
+#   if ALLOC_CACHE_SIZE_MAX < 8
+#      error SETTINGS ERROR: "ALLOC_CACHE_SIZE_MAX" REQUIRE QWORD GREATER THAN OR EQUAL TO 8
+#   elif ALLOC_CACHE_SIZE_MAX < 32
+#      ifndef REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE
+#          warning SETTINGS WARNING: DUE TO PERFORMANCE THE ALLOCATION CACHE SHOULD CONTAIN AT LEAST 32 ELEMENTS. THE "ALLOC_CACHE_SIZE_MAX" SHOULD BE GREATER OR EQUAL TO 32. DEFINE "REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE" TO BYPASS THIS WARNING
+#      endif
+#   endif
+#   if BYTEMAP_RESERVE_ZONES < 1
+#      error SETTINGS ERROR: "BYTEMAP_RESERVE_ZONES" REQUIRE QWORD GREATER THAN 0
+#   elif BYTEMAP_RESERVE_ZONES < 8
+#      ifndef REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE
+#          warning SETTINGS WARNING: DUE TO PERFORMANCE THE BYTEMAP SHOULD RESERVE AT LEAST 8 ZONES. THE "BYTEMAP_RESERVE_ZONES" SHOULD BE GREATER OR EQUAL TO 8. DEFINE "REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE" TO BYPASS THIS WARNING
+#      endif
+#   endif
+#   if ARRAY_RESERVE_ZONES < 1
+#      error SETTINGS ERROR: "ARRAY_RESERVE_ZONES" REQUIRE QWORD GREATER THAN 0
+#   elif ARRAY_RESERVE_ZONES < 8
+#      ifndef REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE
+#          warning SETTINGS WARNING: DUE TO PERFORMANCE THE ARRAY SHOULD RESERVE AT LEAST 8 ZONES. THE "ARRAY_RESERVE_ZONES" SHOULD BE GREATER OR EQUAL TO 8. DEFINE "REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE" TO BYPASS THIS WARNING
+#      endif
+#   endif
+#   if ARRAY_CACHE_SIZE_MAX < 8
+#      error SETTINGS ERROR: "ARRAY_CACHE_SIZE_MAX" REQUIRE QWORD GREATER THAN OR EQUAL TO 8
+#   elif ARRAY_CACHE_SIZE_MAX < 32
+#      ifndef REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE
+#          warning SETTINGS WARNING: DUE TO PERFORMANCE THE ARRAY CACHE SHOULD CONTAIN AT LEAST 32 ELEMENTS. THE "ARRAY_CACHE_SIZE_MAX" SHOULD BE GREATER OR EQUAL TO 32. DEFINE "REGISTRY_DATABASE_BYPASS_PERFORMANCE_ISSUE" TO BYPASS THIS WARNING
+#      endif
+#   endif
+#endif
+
+#define NO_CONNECTOR
+#define NO_RECORDER
+#define NO_ERROR_LOOKINGUP
+#define NO_UAC
+
+#include "../system/system.h"
+
+#undef NO_UAC
+#undef NO_CONNECTOR
+#undef NO_RECORDER
+#undef NO_ERROR_LOOKINGUP
+
+#include "../utilityX/utilityX.h"
 #include <fstream>
 #include <iostream>
 #include <filesystem>
@@ -66,60 +216,13 @@
 #include <random>
 #include "../unordered_dense/include/ankerl/unordered_dense.h"
 
-#if defined(_MSC_VER)
-#define PACK_PUSH_1 __pragma(pack(push, 1))
-#define PACK_POP    __pragma(pack(pop))
-#define PACKED
-#elif defined(__GNUC__) || defined(__clang__)
-#define PACK_PUSH_1
-#define PACK_POP
-#define PACKED __attribute__((packed))
-#else
-#define PACK_PUSH_1
-#define PACK_POP
-#define PACKED
-#endif
-
-#define NO_CONNECTOR
-#define NO_RECORDER
-#define NO_ERROR_LOOKINGUP
-#define NO_UAC
-
-#include "../system/system.h"
-
-#undef NO_UAC
-#undef NO_CONNECTOR
-#undef NO_RECORDER
-#undef NO_ERROR_LOOKINGUP
-
-#include "../utilityX/utilityX.h"
-
-
-//settings
-# define NUMBER_OF_PAGE_CACHED      8LL;
-# define MMAP_COPY_CHUNK_SIZE       4096LL;
-# define L2_MAP_MAX_SIZE_ZONES      32LL;
-
-# define ALLOC_RESERVE_ZONE         16LL;
-# define ALLOC_CACHE_SIZE_MAX       40LL;
-# define BYTEMAP_RESERVE_ZONES      16LL;
-# define ARRAY_RESERVE_ZONES        16LL;
-# define ARRAY_CACHE_SIZE_MAX       40LL;
-
-//vars DO NOT CHANGE
-# define DOUBLE_QWORD_SIZE          16LL;
-# define TRIPLE_QWORD_SIZE          24LL;
-# define MMAP_KEY_STRUCTURE_SIZE    202LL;
-
-
-
 // namespace registry_editor_service_local {
 //     //settings
 //     static constexpr QWORD NUMBER_OF_PAGE_CACHED        = 8;
 //     static constexpr QWORD MMAP_COPY_CHUNK_SIZE         = 4096;
 //     static constexpr QWORD L2_MAP_MAX_SIZE_ZONES                  = 32;
 // 
-//     static constexpr QWORD ALLOC_RESERVE_ZONE          = 16;
+//     static constexpr QWORD ALLOC_RESERVE_ZONES          = 16;
 //     static constexpr QWORD ALLOC_CACHE_SIZE_MAX         = 40;
 //     static constexpr QWORD BYTEMAP_RESERVE_ZONES        = 16;
 // 	static constexpr QWORD ARRAY_RESERVE_ZONES          = 16;
@@ -137,15 +240,12 @@
 //     // 
 //     // struct setting {
 //     //     // 0 mean default;
-//     //     QWORD ALLOC_RESERVE_ZONE = 0;
+//     //     QWORD ALLOC_RESERVE_ZONES = 0;
 //     // 	QWORD ALLOC_CACHE_SIZE_MAX = 0;
 //     // 	QWORD element_array_reserved_zones = 0;
 //     //     QWORD bytemap_reserved_zones = 0;
 //     // };
 // }
-
-
-
 
 // THIS CODE USING AES-256 FOR EN/DECRYPTION
 
@@ -826,7 +926,7 @@ namespace registry_editor_service_local {
         //     access_memory_address((BYTE*)&repeat, address+sizeof(prealloc_size), sizeof(repeat));
         // 
         //     if (prealloc_size == 0) {
-        //         prealloc_size = ALLOC_RESERVE_ZONE + 3;
+        //         prealloc_size = ALLOC_RESERVE_ZONES + 3;
         //         malloc_map_temp = (QWORD*)malloc(prealloc_size * DOUBLE_QWORD_SIZE);
         //     }
         //     address += DOUBLE_QWORD_SIZE;
@@ -912,7 +1012,7 @@ namespace registry_editor_service_local {
         //         {
         //             QWORD* parameter = malloc_map_temp + 1;
         //             // if (prealloc_size == repeat) {
-        //             //     prealloc_size += ALLOC_RESERVE_ZONE + 1;
+        //             //     prealloc_size += ALLOC_RESERVE_ZONES + 1;
         //             //     
         //             //     // enum state : BYTE {
         //             //     //     DONE_MALLOC     = 0b00000001,
@@ -970,7 +1070,7 @@ namespace registry_editor_service_local {
         //         }
         //     }
         //     if (prealloc_size < repeat + 1) {
-        //         QWORD addr = disk_realloc(address - DOUBLE_QWORD_SIZE, (prealloc_size + (ALLOC_RESERVE_ZONE + 1)) * DOUBLE_QWORD_SIZE);
+        //         QWORD addr = disk_realloc(address - DOUBLE_QWORD_SIZE, (prealloc_size + (ALLOC_RESERVE_ZONES + 1)) * DOUBLE_QWORD_SIZE);
         //         if (addr != (address - DOUBLE_QWORD_SIZE)) {
         //             write_memory_address((BYTE*)(&addr), 0x0000000000000000, sizeof(QWORD));
         //             address = addr + DOUBLE_QWORD_SIZE;
@@ -1161,7 +1261,7 @@ namespace registry_editor_service_local {
 
             BYTE map_initialized = 0;
             if (prealloc_size == 0) {
-                prealloc_size = ALLOC_RESERVE_ZONE + 3;
+                prealloc_size = ALLOC_RESERVE_ZONES + 3;
                 repeat = 2;
 
                 malloc_map_temp = (QWORD*)malloc(prealloc_size * DOUBLE_QWORD_SIZE);
@@ -1193,7 +1293,7 @@ namespace registry_editor_service_local {
                 access_memory_address((BYTE*)malloc_map_temp, address + DOUBLE_QWORD_SIZE, map_size * DOUBLE_QWORD_SIZE);
             }
 
-            QWORD grow_bytes = (ALLOC_RESERVE_ZONE + 1) * DOUBLE_QWORD_SIZE;
+            QWORD grow_bytes = (ALLOC_RESERVE_ZONES + 1) * DOUBLE_QWORD_SIZE;
             QWORD table_start = address, table_stop = 0;
             QWORD table_old_bytes = DOUBLE_QWORD_SIZE + (prealloc_size * DOUBLE_QWORD_SIZE);
             QWORD table_new_bytes = table_old_bytes + grow_bytes;
@@ -1228,7 +1328,7 @@ namespace registry_editor_service_local {
                         move_memory_address(current_start, table_start, table_old_bytes);
                         table_stop = current_stop;
                         table_resize_done = 1;
-                        prealloc_size += (ALLOC_RESERVE_ZONE + 1);
+                        prealloc_size += (ALLOC_RESERVE_ZONES + 1);
 
                         write_memory_address((BYTE*)&prealloc_size, table_start, sizeof(prealloc_size));
                         write_memory_address((BYTE*)&table_start, 0x0000000000000000, sizeof(QWORD));
@@ -1249,7 +1349,7 @@ namespace registry_editor_service_local {
                     QWORD gap_after_table = current_start - table_stop;
                     if (gap_after_table >= grow_bytes) {
                         table_stop += grow_bytes;
-                        prealloc_size += (ALLOC_RESERVE_ZONE + 1);
+                        prealloc_size += (ALLOC_RESERVE_ZONES + 1);
                         table_resize_done = 1;
 
                         write_memory_address((BYTE*)&prealloc_size, table_start, sizeof(prealloc_size));
@@ -1283,7 +1383,7 @@ namespace registry_editor_service_local {
 
             if (prealloc_size < repeat + 1 && !table_resize_done && table_zone == repeat - 1) {
                 table_stop += grow_bytes;
-                prealloc_size += (ALLOC_RESERVE_ZONE + 1);
+                prealloc_size += (ALLOC_RESERVE_ZONES + 1);
                 table_resize_done = 1;
 
                 write_memory_address((BYTE*)&prealloc_size, table_start, sizeof(prealloc_size));
@@ -1336,7 +1436,7 @@ namespace registry_editor_service_local {
                 table_stop = new_table_stop;
                 table_zone = new_table_zone;
                 table_resize_done = 1;
-                prealloc_size += (ALLOC_RESERVE_ZONE + 1);
+                prealloc_size += (ALLOC_RESERVE_ZONES + 1);
                 write_memory_address((BYTE*)&prealloc_size, table_start, sizeof(prealloc_size));
 
                 if (data_candidate != 0 && data_candidate_zone == table_candidate_zone) {
@@ -1637,7 +1737,7 @@ namespace registry_editor_service_local {
                             main.read((char*)&elements_count, sizeof(QWORD));
                             main.read((char*)&REP, sizeof(QWORD));
                             {
-                                QWORD malloc_table_prealloc_size = 4 + ALLOC_RESERVE_ZONE + REP;
+                                QWORD malloc_table_prealloc_size = 4 + ALLOC_RESERVE_ZONES + REP;
                                 {
                                     endofmalloctable = (malloc_table_prealloc_size + elements_count + 1) * DOUBLE_QWORD_SIZE + 0x0000000000000018;
                                     endofbytemap = endofmalloctable + DOUBLE_QWORD_SIZE + ((BYTEMAP_RESERVE_ZONES + REP) * TRIPLE_QWORD_SIZE) + 8;
