@@ -2,7 +2,7 @@
 
 > **Version:** 2.0A
 
-DEV NOTE:
+## DEV NOTE:
 - This version store runtime data in binary file (like ram) not memory so u can open & store large file without using many ram (swap & virtual address)
 - Support lock data with password (key, value, byte, word, dword, qword) using encryption (AES-256)
 - Server / Host with custom ip/port
@@ -17,6 +17,8 @@ DEV NOTE:
 THIS VERSION WILL CHANGED `registry_editor.h` file format/symbol/function/usuage
 
 PLEASE NOTE THAT ANY UPDATE VERSION MAY CHANGE FORMATTION OF MMAP OR REGX FILE.
+
+## Questions, feedback, or suggestions? DM via email: helldefense@outlook.com.
 
 ## License
 
