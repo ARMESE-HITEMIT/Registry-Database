@@ -38,45 +38,6 @@
 // 
 // -- -
 
-#pragma message(" *	Registry Editor Library")
-#pragma message(" *")
-#pragma message(" *	Copyright (c) 2022 RANDOM ARMESE HITEMIT - REGISTRY EDITOR")
-#pragma message(" *	All rights reserved.")
-#pragma message(" ")
-#pragma message(" ")
-#pragma message(" ------------------------------------------------------ -")
-#pragma message(" 12 / 20 / 2025 - 11:30 : 54PM")
-#pragma message(" ------------------------------------------------------ -")
-#pragma message(" ")
-#pragma message(" LICENSE")
-#pragma message(" ")
-#pragma message(" ====================================================== =")
-#pragma message(" ")
-#pragma message(" Copyright(c) 2022 RANDOM ARMESE HITEMIT")
-#pragma message(" All Rights Reserved")
-#pragma message(" ")
-#pragma message(" -- -")
-#pragma message(" ")
-#pragma message(" Permission is hereby granted, free of charge, to any person obtaining a copy")
-#pragma message(" of this software and associated documentation files(the \"Software\"), to deal")
-#pragma message(" in the Software without restriction, including without limitation the rights")
-#pragma message(" to use, copy, modify, merge, publish, distribute, sublicense, and /or sell")
-#pragma message(" copies of the Software, and to permit persons to whom the Software is")
-#pragma message(" furnished to do so, subject to the following conditions :")
-#pragma message(" ")
-#pragma message(" The above copyright notice and this permission notice shall be included in all")
-#pragma message(" copies or substantial portions of the Software.")
-#pragma message(" ")
-#pragma message(" THE SOFTWARE IS PROVIDED \"AS IS\", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR")
-#pragma message(" IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,")
-#pragma message(" FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT.IN NO EVENT SHALL ")
-#pragma message(" AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER")
-#pragma message(" LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,")
-#pragma message(" OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE")
-#pragma message(" SOFTWARE.")
-#pragma message(" ")
-#pragma message(" -- -")
-
 #pragma once
 
 #include <fstream>
@@ -133,30 +94,58 @@
 
 #include "../utilityX/utilityX.h"
 
-namespace registry_editor_service_local {
-    static constexpr QWORD alloc_reserve_zones          = 16;
-    static constexpr QWORD alloc_cache_size_max         = 40;
-    static constexpr QWORD element_array_reserved_zones = 8;
-    static constexpr QWORD bytemap_reserved_zones       = 8;
-    static constexpr QWORD double_qword_size            = 2 * sizeof(QWORD);
-	static constexpr QWORD bytemap_address              = 0x000000000000018;
 
-    //number(s) of element load to map
-    static constexpr QWORD L2_map_size                  = 32;
+//settings
+# define NUMBER_OF_PAGE_CACHED      8LL;
+# define MMAP_COPY_CHUNK_SIZE       4096LL;
+# define L2_MAP_MAX_SIZE_ZONES      32LL;
 
-    //
+# define ALLOC_RESERVE_ZONE         16LL;
+# define ALLOC_CACHE_SIZE_MAX       40LL;
+# define BYTEMAP_RESERVE_ZONES      16LL;
+# define ARRAY_RESERVE_ZONES        16LL;
+# define ARRAY_CACHE_SIZE_MAX       40LL;
 
-    // Im tooo lazy for this
-    // or stoopid
-    // 
-    // struct setting {
-    //     // 0 mean default;
-    //     QWORD alloc_reserve_zones = 0;
-	// 	QWORD alloc_cache_size_max = 0;
-	// 	QWORD element_array_reserved_zones = 0;
-    //     QWORD bytemap_reserved_zones = 0;
-    // };
-}
+//vars DO NOT CHANGE
+# define DOUBLE_QWORD_SIZE          16LL;
+# define TRIPLE_QWORD_SIZE          24LL;
+# define MMAP_KEY_STRUCTURE_SIZE    202LL;
+
+
+
+// namespace registry_editor_service_local {
+//     //settings
+//     static constexpr QWORD NUMBER_OF_PAGE_CACHED        = 8;
+//     static constexpr QWORD MMAP_COPY_CHUNK_SIZE         = 4096;
+//     static constexpr QWORD L2_MAP_MAX_SIZE_ZONES                  = 32;
+// 
+//     static constexpr QWORD ALLOC_RESERVE_ZONE          = 16;
+//     static constexpr QWORD ALLOC_CACHE_SIZE_MAX         = 40;
+//     static constexpr QWORD BYTEMAP_RESERVE_ZONES        = 16;
+// 	static constexpr QWORD ARRAY_RESERVE_ZONES          = 16;
+// 	static constexpr QWORD ARRAY_CACHE_SIZE_MAX         = 40;
+// 
+//     //vars DO NOT CHANGE
+//     static constexpr QWORD DOUBLE_QWORD_SIZE            = 2 * sizeof(QWORD);
+//     static constexpr QWORD TRIPLE_QWORD_SIZE            = 3 * sizeof(QWORD);
+// 	static constexpr QWORD MMAP_KEY_STRUCTURE_SIZE      = (TRIPLE_QWORD_SIZE << 3) + sizeof(WORD) + sizeof(QWORD);
+// 
+//     //
+// 
+//     // Im tooo lazy for this
+//     // or stoopid
+//     // 
+//     // struct setting {
+//     //     // 0 mean default;
+//     //     QWORD ALLOC_RESERVE_ZONE = 0;
+//     // 	QWORD ALLOC_CACHE_SIZE_MAX = 0;
+//     // 	QWORD element_array_reserved_zones = 0;
+//     //     QWORD bytemap_reserved_zones = 0;
+//     // };
+// }
+
+
+
 
 // THIS CODE USING AES-256 FOR EN/DECRYPTION
 
@@ -178,7 +167,8 @@ namespace registry_editor_service_local {
       -------------------------------------------------------------------------------------------------------"
     >
 
-    <format version: "2.0A" : FORMAT : 
+    <format version: "2.0A" : FORMAT :
+    <QWORD : Number(s) of element(s) (*key structure & *array excluding root)>
       <QWORD : Number(s) of string(s)>*<QWORD | string id><QWORD | number(s) of element use this string><string : <QWORD | Size of string><byte(s)>>
       <WORD | BITMASK>
       <BITMASK 00 : <QWORD | ROOT key(s) size(s)><QWORD | offset to pointer array of key structure>>
@@ -236,67 +226,67 @@ namespace registry_editor_service_local {
 // MMAP Format
 /*
     <QWORD | Address to Malloc table><QWORD | Address to bytes map><QWORD | Address to ROOT>
+    <Malloc table : <QWORD | Number(s) of zone prealloc>
+      <QWORD | Numbers of zone(s) use><QWORD | address start><QWORD | address stop>
+    >
+    <BYTES MAP : <QWORD | number(s) of string(s) prealloc>
+      <QWORD : Number(s) of string(s) address>*<QWORD | string id><QWORD | number(s) of element use this string><QWORD | Address to string>
+      <string : <QWORD | Size of string><byte(s)>>
+    >
     <ROOT :
       <WORD | BITMASK>
-      <BITMASK 00 : <QWORD | ROOT key(s) size(s)><QWORD | address to pointer array of key structure>>
-      <BITMASK 01 : <QWORD | ROOT byte(s) size(s)><QWORD | address to data array of byte>>
-      <BITMASK 02 : <QWORD | ROOT word(s) size(s)><QWORD | address to data array of word>>
-      <BITMASK 03 : <QWORD | ROOT dword(s) size(s)><QWORD | address to data array of dword>>
-      <BITMASK 04 : <QWORD | ROOT qword(s) size(s)><QWORD | address to data array of qword>>
-      <BITMASK 05 : <QWORD | ROOT string(s) size(s)><QWORD | address to pointer array of string>>
-      <BITMASK 06 : <QWORD | ROOT lock_key(s) size(s)><QWORD | address to encrypt pointer array of encrypt key structure>>
-      <BITMASK 07 : <QWORD | ROOT lock_byte(s) size(s)><QWORD | address to encrypt data array byte>>
-      <BITMASK 08 : <QWORD | ROOT lock_word(s) size(s)><QWORD | address to encrypt data array word>>
-      <BITMASK 09 : <QWORD | ROOT lock_dword(s) size(s)><QWORD | address to encrypt data array dword>>
-      <BITMASK 10 : <QWORD | ROOT lock_qword(s) size(s)><QWORD | address to encrypt data array of qword>>
-      <BITMASK 11 : <QWORD | ROOT lock_string(s) size(s)><QWORD | address to encrypt pointer array of encrypt string>>
+      <QWORD | ROOT key(s) size(s)><QWORD | address to pointer array of key structure>
+      <QWORD | ROOT byte(s) size(s)><QWORD | address to data array of byte>
+      <QWORD | ROOT word(s) size(s)><QWORD | address to data array of word>
+      <QWORD | ROOT dword(s) size(s)><QWORD | address to data array of dword>
+      <QWORD | ROOT qword(s) size(s)><QWORD | address to data array of qword>
+      <QWORD | ROOT string(s) size(s)><QWORD | address to pointer array of string>
+      <QWORD | ROOT lock_key(s) size(s)><QWORD | address to encrypt pointer array of encrypt key structure>
+      <QWORD | ROOT lock_byte(s) size(s)><QWORD | address to encrypt data array byte>
+      <QWORD | ROOT lock_word(s) size(s)><QWORD | address to encrypt data array word>
+      <QWORD | ROOT lock_dword(s) size(s)><QWORD | address to encrypt data array dword>
+      <QWORD | ROOT lock_qword(s) size(s)><QWORD | address to encrypt data array of qword>
+      <QWORD | ROOT lock_string(s) size(s)><QWORD | address to encrypt pointer array of encrypt string>
     >
     <key structure : <QWORD | string id (key name)>
       <WORD | BITMASK>
-      <BITMASK 00 : <QWORD | key(s) size(s)><QWORD | address to pointer array of key structure>>
-      <BITMASK 01 : <QWORD | byte(s) size(s)><QWORD | address to data array of byte>>
-      <BITMASK 02 : <QWORD | word(s) size(s)><QWORD | address to data array of word>>
-      <BITMASK 03 : <QWORD | dword(s) size(s)><QWORD | address to data array of dword>>
-      <BITMASK 04 : <QWORD | qword(s) size(s)><QWORD | address to data array of qword>>
-      <BITMASK 05 : <QWORD | string(s) size(s)><QWORD | address to pointer array of string>>
-      <BITMASK 06 : <QWORD | lock_key(s) size(s)><QWORD | address to encrypt pointer array of encrypt key structure>>
-      <BITMASK 07 : <QWORD | lock_byte(s) size(s)><QWORD | address to encrypt data array byte>>
-      <BITMASK 08 : <QWORD | lock_word(s) size(s)><QWORD | address to encrypt data array word>>
-      <BITMASK 09 : <QWORD | lock_dword(s) size(s)><QWORD | address to encrypt data array dword>>
-      <BITMASK 10 : <QWORD | lock_qword(s) size(s)><QWORD | address to encrypt data array of qword>>
-      <BITMASK 11 : <QWORD | lock_string(s) size(s)><QWORD | address to encrypt pointer array of encrypt string>>
+      <QWORD | key(s) size(s)><QWORD | address to pointer array of key structure>
+      <QWORD | byte(s) size(s)><QWORD | address to data array of byte>
+      <QWORD | word(s) size(s)><QWORD | address to data array of word>
+      <QWORD | dword(s) size(s)><QWORD | address to data array of dword>
+      <QWORD | qword(s) size(s)><QWORD | address to data array of qword>
+      <QWORD | string(s) size(s)><QWORD | address to pointer array of string>
+      <QWORD | lock_key(s) size(s)><QWORD | address to encrypt pointer array of encrypt key structure>
+      <QWORD | lock_byte(s) size(s)><QWORD | address to encrypt data array byte>
+      <QWORD | lock_word(s) size(s)><QWORD | address to encrypt data array word>
+      <QWORD | lock_dword(s) size(s)><QWORD | address to encrypt data array dword>
+      <QWORD | lock_qword(s) size(s)><QWORD | address to encrypt data array of qword>
+      <QWORD | lock_string(s) size(s)><QWORD | address to encrypt pointer array of encrypt string>
     >
     <encrypt key structure : <QWORD | string id (key name)>
       <ENCRYPT : <WORD | BITMASK>
-        <BITMASK 00 : <QWORD | key(s) size(s)><QWORD | address to pointer array of key structure>>
-        <BITMASK 01 : <QWORD | byte(s) size(s)><QWORD | address to data array of byte>>
-        <BITMASK 02 : <QWORD | word(s) size(s)><QWORD | address to data array of word>>
-        <BITMASK 03 : <QWORD | dword(s) size(s)><QWORD | address to data array of dword>>
-        <BITMASK 04 : <QWORD | qword(s) size(s)><QWORD | address to data array of qword>>
-        <BITMASK 05 : <QWORD | string(s) size(s)><QWORD | address to pointer array of string>>
-        <BITMASK 06 : <QWORD | lock_key(s) size(s)><QWORD | address to encrypt pointer array of encrypt key structure>>
-        <BITMASK 07 : <QWORD | lock_byte(s) size(s)><QWORD | address to encrypt data array byte>>
-        <BITMASK 08 : <QWORD | lock_word(s) size(s)><QWORD | address to encrypt data array word>>
-        <BITMASK 09 : <QWORD | lock_dword(s) size(s)><QWORD | address to encrypt data array dword>>
-        <BITMASK 10 : <QWORD | lock_qword(s) size(s)><QWORD | address to encrypt data array of qword>>
-        <BITMASK 11 : <QWORD | lock_string(s) size(s)><QWORD | address to encrypt pointer array of encrypt string>>
+        <QWORD | key(s) size(s)><QWORD | address to pointer array of key structure>
+        <QWORD | byte(s) size(s)><QWORD | address to data array of byte>
+        <QWORD | word(s) size(s)><QWORD | address to data array of word>
+        <QWORD | dword(s) size(s)><QWORD | address to data array of dword>
+        <QWORD | qword(s) size(s)><QWORD | address to data array of qword>
+        <QWORD | string(s) size(s)><QWORD | address to pointer array of string>
+        <QWORD | lock_key(s) size(s)><QWORD | address to encrypt pointer array of encrypt key structure>
+        <QWORD | lock_byte(s) size(s)><QWORD | address to encrypt data array byte>
+        <QWORD | lock_word(s) size(s)><QWORD | address to encrypt data array word>
+        <QWORD | lock_dword(s) size(s)><QWORD | address to encrypt data array dword>
+        <QWORD | lock_qword(s) size(s)><QWORD | address to encrypt data array of qword>
+        <QWORD | lock_string(s) size(s)><QWORD | address to encrypt pointer array of encrypt string>
       >
     >
     <pointer array : <QWORD | number(s) of element prealloc><QWORD | number(s) of element in arrays> × <<QWORD | string id (element name)><QWORD | address to data>>>
     <data array : <QWORD | number(s) of element prealloc><QWORD | number(s) of element in arrays> × <<QWORD | string id (element name)><T bytes>>>
     <encrypt pointer array : <QWORD | number(s) of element prealloc><QWORD | number(s) of element in arrays> × <<QWORD | string id (element name)><QWORD | address to encrypt data>>>
     <encrypt data array : <QWORD | number(s) of element prealloc><QWORD | number(s) of element in arrays> × <<QWORD | string id (element name)><encrypt of T bytes>>>
-
-    <BYTES MAP : <QWORD | number(s) of string(s) prealloc>
-      <QWORD : Number(s) of string(s) address>*<QWORD | string id><QWORD | number(s) of element use this string><QWORD | Address to string>
-      <string : <QWORD | Size of string><byte(s)>>
-    >
-    <Malloc table : <QWORD | Number(s) of zone prealloc>
-      <QWORD | Numbers of zone(s) use><QWORD | address start><QWORD | address stop>
-    >
 */
 
 namespace registry_editor_service_local {
+    const QWORD page_size = NUMBER_OF_PAGE_CACHED * utilityX::filesystem::page_size();
     namespace encryption {
         namespace detail_aes {
             static const uint8_t sbox[256] = {
@@ -562,22 +552,22 @@ namespace registry_editor_service_local {
             return plaintext;
         }
     }
-    enum class OpenMode : BYTE {
-        ReadWrite = 0,
-        ReadOnly = 1,
-        WriteOnly = 2,
-    };
+    //enum class OpenMode : BYTE {
+    //    ReadWrite = 0,
+    //    ReadOnly = 1,
+    //    WriteOnly = 2,
+    //};
 
-    const QWORD page_size = utilityX::filesystem::page_size();
-    class registry_database {
+    class registry_database;
+    class registry_editor_service_local {
     private:
-        BYTE* L1_cache      = nullptr;
-        QWORD L1_sector     = 0;
+        BYTE* L1_cache = nullptr;
+        QWORD L1_sector = 0;
         QWORD L1_max_sector = 1;
-        QWORD L2_sector     = 0;
+        QWORD L2_sector = 0;
         ankerl::unordered_dense::map<std::string, QWORD>* L2_map = nullptr;
 
-        OpenMode function_mode = OpenMode::ReadOnly;
+        //OpenMode function_mode = OpenMode::ReadOnly;
         char* registry_file_path;
         FileHandle cache_handle;
         FileHandle recovery_file;
@@ -601,7 +591,7 @@ namespace registry_editor_service_local {
                 utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                 this->L1_sector = q;
                 if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
-                std::memset(this->L1_cache, 0, page_size);
+                // std::memset(this->L1_cache, 0, page_size);
                 utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
             }
 
@@ -617,7 +607,7 @@ namespace registry_editor_service_local {
                 remaining -= copy_size;
                 if (remaining == 0) break;
                 utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
-                std::memset(this->L1_cache, 0, page_size);
+                // std::memset(this->L1_cache, 0, page_size);
                 utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, ++this->L1_sector);
                 if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
                 offset = 0;
@@ -641,7 +631,7 @@ namespace registry_editor_service_local {
                 remaining -= copy_size;
                 if (remaining == 0) break;
                 utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
-                std::memset(this->L1_cache, 0, page_size);
+                // std::memset(this->L1_cache, 0, page_size);
                 utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, ++this->L1_sector);
                 if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
                 index = 0;
@@ -660,7 +650,7 @@ namespace registry_editor_service_local {
                 utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                 this->L1_sector = q;
                 if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
-                std::memset(this->L1_cache, 0, page_size);
+                // std::memset(this->L1_cache, 0, page_size);
                 utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
             }
             QWORD remaining = SIZE;
@@ -677,7 +667,7 @@ namespace registry_editor_service_local {
                 if (remaining == 0) break;
 
                 utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
-                std::memset(this->L1_cache, 0, page_size);
+                // std::memset(this->L1_cache, 0, page_size);
                 utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, ++this->L1_sector);
                 if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
                 offset = 0;
@@ -704,7 +694,7 @@ namespace registry_editor_service_local {
                 if (remaining == 0) break;
 
                 utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
-                std::memset(this->L1_cache, 0, page_size);
+                // std::memset(this->L1_cache, 0, page_size);
                 utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, ++this->L1_sector);
                 if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
                 index = 0;
@@ -716,7 +706,7 @@ namespace registry_editor_service_local {
                 notice that this version get address instead of index
             */
 
-            BYTE* buffer = (BYTE*)malloc(page_size);
+            BYTE* buffer = (BYTE*)malloc(MMAP_COPY_CHUNK_SIZE);
             if (!buffer) return;
 
             QWORD remaining = SIZE;
@@ -734,7 +724,7 @@ namespace registry_editor_service_local {
                     utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                     this->L1_sector = source_sector;
                     if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
-                    std::memset(this->L1_cache, 0, page_size);
+                    // std::memset(this->L1_cache, 0, page_size);
                     utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                 }
 
@@ -744,7 +734,7 @@ namespace registry_editor_service_local {
                     utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                     this->L1_sector = destination_sector;
                     if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
-                    std::memset(this->L1_cache, 0, page_size);
+                    // std::memset(this->L1_cache, 0, page_size);
                     utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                 }
 
@@ -762,7 +752,7 @@ namespace registry_editor_service_local {
                 notice that this version get address instead of index
             */\
 
-            BYTE* buffer = (BYTE*)malloc(page_size);
+                BYTE* buffer = (BYTE*)malloc(MMAP_COPY_CHUNK_SIZE);
             if (!buffer) return;
 
             QWORD remaining = SIZE;
@@ -780,7 +770,7 @@ namespace registry_editor_service_local {
                         utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                         this->L1_sector++;
                         if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
-                        std::memset(this->L1_cache, 0, page_size);
+                        // std::memset(this->L1_cache, 0, page_size);
                         utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                         destination -= page_size;
                     }
@@ -798,7 +788,7 @@ namespace registry_editor_service_local {
                     utilityX::filesystem::flush_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                     this->L1_sector++;
                     if (this->L1_sector > this->L1_max_sector) this->L1_max_sector = this->L1_sector;
-                    std::memset(this->L1_cache, 0, page_size);
+                    // std::memset(this->L1_cache, 0, page_size);
                     utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, this->L1_sector);
                     sources -= page_size;
                 }
@@ -836,41 +826,41 @@ namespace registry_editor_service_local {
         //     access_memory_address((BYTE*)&repeat, address+sizeof(prealloc_size), sizeof(repeat));
         // 
         //     if (prealloc_size == 0) {
-        //         prealloc_size = alloc_reserve_zones + 3;
-        //         malloc_map_temp = (QWORD*)malloc(prealloc_size * double_qword_size);
+        //         prealloc_size = ALLOC_RESERVE_ZONE + 3;
+        //         malloc_map_temp = (QWORD*)malloc(prealloc_size * DOUBLE_QWORD_SIZE);
         //     }
-        //     address += double_qword_size;
+        //     address += DOUBLE_QWORD_SIZE;
         // 
         //     QWORD return_address[2] = { 0 , 0 };
         //     QWORD zone[2] = { 1, 1 };
-        //     if (prealloc_size >= alloc_cache_size_max) {
-        //         malloc_map_temp = (QWORD*)malloc(alloc_cache_size_max * double_qword_size);
-        //         access_memory_address((BYTE*)(malloc_map_temp), address, alloc_cache_size_max * double_qword_size);
+        //     if (prealloc_size >= ALLOC_CACHE_SIZE_MAX) {
+        //         malloc_map_temp = (QWORD*)malloc(ALLOC_CACHE_SIZE_MAX * DOUBLE_QWORD_SIZE);
+        //         access_memory_address((BYTE*)(malloc_map_temp), address, ALLOC_CACHE_SIZE_MAX * DOUBLE_QWORD_SIZE);
         // 
         //         if (repeat == 0 || repeat == 1) {
         //             repeat = 2;
         //             malloc_map_temp[0] = static_cast<QWORD>(0x00000000);
         //             malloc_map_temp[1] = static_cast<QWORD>(0x00000018);
-        //             malloc_map_temp[2] = static_cast<QWORD>(address - double_qword_size);
-        //             malloc_map_temp[3] = static_cast<QWORD>(address + (prealloc_size * double_qword_size));
-        //             write_memory_address((BYTE*)malloc_map_temp, address, alloc_cache_size_max * double_qword_size);
+        //             malloc_map_temp[2] = static_cast<QWORD>(address - DOUBLE_QWORD_SIZE);
+        //             malloc_map_temp[3] = static_cast<QWORD>(address + (prealloc_size * DOUBLE_QWORD_SIZE));
+        //             write_memory_address((BYTE*)malloc_map_temp, address, ALLOC_CACHE_SIZE_MAX * DOUBLE_QWORD_SIZE);
         //         }
         //         {
         //             QWORD flush[2] = {
         //                 prealloc_size,
         //                 repeat + 1
         //             };
-        //             write_memory_address((BYTE*)flush, address - double_qword_size, double_qword_size);
+        //             write_memory_address((BYTE*)flush, address - DOUBLE_QWORD_SIZE, DOUBLE_QWORD_SIZE);
         //         }
         //         {
         //             QWORD current_chunk_start = 0;
         //             QWORD prev_stop = malloc_map_temp[1];
         // 
         //             for (; zone[0] < repeat; zone[0]++) {
-        //                 if (zone[0] >= current_chunk_start + alloc_cache_size_max) {
-        //                     current_chunk_start += alloc_cache_size_max;
-        //                     QWORD fetch_zones = (repeat - current_chunk_start < alloc_cache_size_max) ? (repeat - current_chunk_start) : alloc_cache_size_max;
-        //                     access_memory_address((BYTE*)malloc_map_temp, address + (current_chunk_start * double_qword_size), fetch_zones * double_qword_size);
+        //                 if (zone[0] >= current_chunk_start + ALLOC_CACHE_SIZE_MAX) {
+        //                     current_chunk_start += ALLOC_CACHE_SIZE_MAX;
+        //                     QWORD fetch_zones = (repeat - current_chunk_start < ALLOC_CACHE_SIZE_MAX) ? (repeat - current_chunk_start) : ALLOC_CACHE_SIZE_MAX;
+        //                     access_memory_address((BYTE*)malloc_map_temp, address + (current_chunk_start * DOUBLE_QWORD_SIZE), fetch_zones * DOUBLE_QWORD_SIZE);
         //                 }
         // 
         //                 QWORD idx = zone[0] - current_chunk_start;
@@ -901,28 +891,28 @@ namespace registry_editor_service_local {
         //         }
         //     }
         //     else {
-        //         malloc_map_temp = (QWORD*)malloc(prealloc_size * double_qword_size);
-        //         access_memory_address((BYTE*)(malloc_map_temp), address, prealloc_size * double_qword_size);
+        //         malloc_map_temp = (QWORD*)malloc(prealloc_size * DOUBLE_QWORD_SIZE);
+        //         access_memory_address((BYTE*)(malloc_map_temp), address, prealloc_size * DOUBLE_QWORD_SIZE);
         // 
         //         if (repeat == 0 || repeat == 1) {
         //             repeat = 2;
         //             malloc_map_temp[0] = static_cast<QWORD>(0x00000000);
         //             malloc_map_temp[1] = static_cast<QWORD>(0x00000018);
-        //             malloc_map_temp[2] = static_cast<QWORD>(address - double_qword_size);
-        //             malloc_map_temp[3] = static_cast<QWORD>(address + (prealloc_size * double_qword_size));
-        //             write_memory_address((BYTE*)malloc_map_temp, address, prealloc_size * double_qword_size);
+        //             malloc_map_temp[2] = static_cast<QWORD>(address - DOUBLE_QWORD_SIZE);
+        //             malloc_map_temp[3] = static_cast<QWORD>(address + (prealloc_size * DOUBLE_QWORD_SIZE));
+        //             write_memory_address((BYTE*)malloc_map_temp, address, prealloc_size * DOUBLE_QWORD_SIZE);
         //         }
         //         {
         //             QWORD flush[2] = {
         //                 prealloc_size,
         //                 repeat + 1
         //             };
-        //             write_memory_address((BYTE*)flush, address - double_qword_size, double_qword_size);
+        //             write_memory_address((BYTE*)flush, address - DOUBLE_QWORD_SIZE, DOUBLE_QWORD_SIZE);
         //         }
         //         {
         //             QWORD* parameter = malloc_map_temp + 1;
         //             // if (prealloc_size == repeat) {
-        //             //     prealloc_size += alloc_reserve_zones + 1;
+        //             //     prealloc_size += ALLOC_RESERVE_ZONE + 1;
         //             //     
         //             //     // enum state : BYTE {
         //             //     //     DONE_MALLOC     = 0b00000001,
@@ -976,25 +966,25 @@ namespace registry_editor_service_local {
         //                 zone[1] = zone[1] + 1;
         //                 return_address[1] = return_address[0] + size + 1;
         //             }
-        //             // zone = (zone * double_qword_size) + address;
+        //             // zone = (zone * DOUBLE_QWORD_SIZE) + address;
         //         }
         //     }
         //     if (prealloc_size < repeat + 1) {
-        //         QWORD addr = disk_realloc(address - double_qword_size, (prealloc_size + (alloc_reserve_zones + 1)) * double_qword_size);
-        //         if (addr != (address - double_qword_size)) {
+        //         QWORD addr = disk_realloc(address - DOUBLE_QWORD_SIZE, (prealloc_size + (ALLOC_RESERVE_ZONE + 1)) * DOUBLE_QWORD_SIZE);
+        //         if (addr != (address - DOUBLE_QWORD_SIZE)) {
         //             write_memory_address((BYTE*)(&addr), 0x0000000000000000, sizeof(QWORD));
-        //             address = addr + double_qword_size;
+        //             address = addr + DOUBLE_QWORD_SIZE;
         //         }
         //     }
         //     free(malloc_map_temp);
         //     return_address[1] = return_address[0] + size;
-        //     address = address + (zone[0] * double_qword_size);
+        //     address = address + (zone[0] * DOUBLE_QWORD_SIZE);
         //     if (zone[0] == repeat) {
-        //         write_memory_address((BYTE*)(&return_address), address, double_qword_size);
+        //         write_memory_address((BYTE*)(&return_address), address, DOUBLE_QWORD_SIZE);
         //     }
         //     else {
-        //         move_memory_address(address, address + double_qword_size, ((repeat - zone[0]) + 1) * double_qword_size);
-        //         write_memory_address((BYTE*)(&return_address), address, double_qword_size);
+        //         move_memory_address(address, address + DOUBLE_QWORD_SIZE, ((repeat - zone[0]) + 1) * DOUBLE_QWORD_SIZE);
+        //         write_memory_address((BYTE*)(&return_address), address, DOUBLE_QWORD_SIZE);
         //     }
         //     return return_address[0];
         // }
@@ -1031,24 +1021,24 @@ namespace registry_editor_service_local {
             access_memory_address((BYTE*)&repeat, table_address + sizeof(prealloc_size), sizeof(repeat));
             // if (prealloc_size == 0 || repeat < 2 || repeat > prealloc_size) return 0;
 
-            QWORD map_size = (prealloc_size >= alloc_cache_size_max) ? alloc_cache_size_max : prealloc_size;
-            malloc_map_temp = (QWORD*)malloc(map_size * double_qword_size);
+            QWORD map_size = (prealloc_size >= ALLOC_CACHE_SIZE_MAX) ? ALLOC_CACHE_SIZE_MAX : prealloc_size;
+            malloc_map_temp = (QWORD*)malloc(map_size * DOUBLE_QWORD_SIZE);
             if (malloc_map_temp) {
                 // NOTE: IM NOT CLEANCODER. NO FLATTENED & EARLY RETURN TO REMOVE A "NOT" OP. NO COMLAIN
-                access_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size, map_size * double_qword_size);
+                access_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE, map_size * DOUBLE_QWORD_SIZE);
 
                 QWORD current_chunk_start = 0, prev_stop = malloc_map_temp[1];
                 QWORD target_zone = repeat, target_stop = 0, table_zone = repeat;
                 QWORD data_candidate = 0, data_candidate_zone = repeat, next_zone_start = 0, zone_index = 1;
 
                 for (; zone_index < repeat; zone_index++) {
-                    if (prealloc_size >= alloc_cache_size_max && zone_index >= current_chunk_start + alloc_cache_size_max) {
-                        current_chunk_start += alloc_cache_size_max;
-                        QWORD fetch_zones = (repeat - current_chunk_start < alloc_cache_size_max) ? (repeat - current_chunk_start) : alloc_cache_size_max;
-                        access_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size + (current_chunk_start * double_qword_size), fetch_zones * double_qword_size);
+                    if (prealloc_size >= ALLOC_CACHE_SIZE_MAX && zone_index >= current_chunk_start + ALLOC_CACHE_SIZE_MAX) {
+                        current_chunk_start += ALLOC_CACHE_SIZE_MAX;
+                        QWORD fetch_zones = (repeat - current_chunk_start < ALLOC_CACHE_SIZE_MAX) ? (repeat - current_chunk_start) : ALLOC_CACHE_SIZE_MAX;
+                        access_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE + (current_chunk_start * DOUBLE_QWORD_SIZE), fetch_zones * DOUBLE_QWORD_SIZE);
                     }
 
-                    QWORD idx = (prealloc_size >= alloc_cache_size_max) ? zone_index - current_chunk_start : zone_index;
+                    QWORD idx = (prealloc_size >= ALLOC_CACHE_SIZE_MAX) ? zone_index - current_chunk_start : zone_index;
                     QWORD current_start = malloc_map_temp[idx * 2];
                     QWORD current_stop = malloc_map_temp[idx * 2 + 1];
 
@@ -1077,7 +1067,7 @@ namespace registry_editor_service_local {
                 // }
 
                 QWORD old_size = target_stop - address;
-                QWORD target_table_offset = table_address + double_qword_size + (target_zone * double_qword_size) + sizeof(QWORD);
+                QWORD target_table_offset = table_address + DOUBLE_QWORD_SIZE + (target_zone * DOUBLE_QWORD_SIZE) + sizeof(QWORD);
 
                 if (size == old_size) {
                     free(malloc_map_temp);
@@ -1109,9 +1099,9 @@ namespace registry_editor_service_local {
                 if (target_zone + 1 < repeat) {
                     QWORD shift_zone = target_zone + 1;
                     while (shift_zone < repeat) {
-                        QWORD shift_count = (repeat - shift_zone < alloc_cache_size_max) ? (repeat - shift_zone) : alloc_cache_size_max;
-                        access_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size + (shift_zone * double_qword_size), shift_count * double_qword_size);
-                        write_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size + ((shift_zone - 1) * double_qword_size), shift_count * double_qword_size);
+                        QWORD shift_count = (repeat - shift_zone < ALLOC_CACHE_SIZE_MAX) ? (repeat - shift_zone) : ALLOC_CACHE_SIZE_MAX;
+                        access_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE + (shift_zone * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
+                        write_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE + ((shift_zone - 1) * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
                         shift_zone += shift_count;
                     }
                 }
@@ -1123,16 +1113,16 @@ namespace registry_editor_service_local {
                 if (insert_zone < used_after_remove) {
                     QWORD shift_end = used_after_remove;
                     while (shift_end > insert_zone) {
-                        QWORD shift_count = (shift_end - insert_zone > alloc_cache_size_max) ? alloc_cache_size_max : (shift_end - insert_zone);
+                        QWORD shift_count = (shift_end - insert_zone > ALLOC_CACHE_SIZE_MAX) ? ALLOC_CACHE_SIZE_MAX : (shift_end - insert_zone);
                         QWORD shift_zone = shift_end - shift_count;
-                        access_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size + (shift_zone * double_qword_size), shift_count * double_qword_size);
-                        write_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size + ((shift_zone + 1) * double_qword_size), shift_count * double_qword_size);
+                        access_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE + (shift_zone * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
+                        write_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE + ((shift_zone + 1) * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
                         shift_end = shift_zone;
                     }
                 }
 
                 QWORD new_zone[2] = { new_address, new_stop };
-                write_memory_address((BYTE*)new_zone, table_address + double_qword_size + (insert_zone * double_qword_size), double_qword_size);
+                write_memory_address((BYTE*)new_zone, table_address + DOUBLE_QWORD_SIZE + (insert_zone * DOUBLE_QWORD_SIZE), DOUBLE_QWORD_SIZE);
 
                 free(malloc_map_temp);
                 return new_address;
@@ -1171,21 +1161,21 @@ namespace registry_editor_service_local {
 
             BYTE map_initialized = 0;
             if (prealloc_size == 0) {
-                prealloc_size = alloc_reserve_zones + 3;
+                prealloc_size = ALLOC_RESERVE_ZONE + 3;
                 repeat = 2;
 
-                malloc_map_temp = (QWORD*)malloc(prealloc_size * double_qword_size);
+                malloc_map_temp = (QWORD*)malloc(prealloc_size * DOUBLE_QWORD_SIZE);
                 if (malloc_map_temp) {
-                    memset(malloc_map_temp, 0, prealloc_size * double_qword_size);
+                    // std::memset(malloc_map_temp, 0, prealloc_size * DOUBLE_QWORD_SIZE);
 
                     malloc_map_temp[0] = static_cast<QWORD>(0x00000000);
                     malloc_map_temp[1] = static_cast<QWORD>(0x00000018);
                     malloc_map_temp[2] = static_cast<QWORD>(address);
-                    malloc_map_temp[3] = static_cast<QWORD>(address + double_qword_size + (prealloc_size * double_qword_size));
+                    malloc_map_temp[3] = static_cast<QWORD>(address + DOUBLE_QWORD_SIZE + (prealloc_size * DOUBLE_QWORD_SIZE));
 
                     write_memory_address((BYTE*)&prealloc_size, address, sizeof(prealloc_size));
                     write_memory_address((BYTE*)&repeat, address + sizeof(prealloc_size), sizeof(repeat));
-                    write_memory_address((BYTE*)malloc_map_temp, address + double_qword_size, prealloc_size * double_qword_size);
+                    write_memory_address((BYTE*)malloc_map_temp, address + DOUBLE_QWORD_SIZE, prealloc_size * DOUBLE_QWORD_SIZE);
                     map_initialized = 1;
                 }
                 else {
@@ -1193,19 +1183,19 @@ namespace registry_editor_service_local {
                 }
             }
 
-            QWORD map_size = (prealloc_size >= alloc_cache_size_max) ? alloc_cache_size_max : prealloc_size;
+            QWORD map_size = (prealloc_size >= ALLOC_CACHE_SIZE_MAX) ? ALLOC_CACHE_SIZE_MAX : prealloc_size;
             if (!malloc_map_temp) {
-                malloc_map_temp = (QWORD*)malloc(map_size * double_qword_size);
+                malloc_map_temp = (QWORD*)malloc(map_size * DOUBLE_QWORD_SIZE);
                 if (!malloc_map_temp) return 0;
             }
 
             if (!map_initialized) {
-                access_memory_address((BYTE*)malloc_map_temp, address + double_qword_size, map_size * double_qword_size);
+                access_memory_address((BYTE*)malloc_map_temp, address + DOUBLE_QWORD_SIZE, map_size * DOUBLE_QWORD_SIZE);
             }
 
-            QWORD grow_bytes = (alloc_reserve_zones + 1) * double_qword_size;
+            QWORD grow_bytes = (ALLOC_RESERVE_ZONE + 1) * DOUBLE_QWORD_SIZE;
             QWORD table_start = address, table_stop = 0;
-            QWORD table_old_bytes = double_qword_size + (prealloc_size * double_qword_size);
+            QWORD table_old_bytes = DOUBLE_QWORD_SIZE + (prealloc_size * DOUBLE_QWORD_SIZE);
             QWORD table_new_bytes = table_old_bytes + grow_bytes;
             QWORD table_zone = repeat, table_candidate = 0, table_candidate_zone = repeat, table_candidate_end = 0;
             QWORD data_candidate = 0, data_candidate_zone = repeat;
@@ -1214,13 +1204,13 @@ namespace registry_editor_service_local {
             QWORD zone_index = 1;
 
             for (; zone_index < repeat; zone_index++) {
-                if (prealloc_size >= alloc_cache_size_max && zone_index >= current_chunk_start + alloc_cache_size_max) {
-                    current_chunk_start += alloc_cache_size_max;
-                    QWORD fetch_zones = (repeat - current_chunk_start < alloc_cache_size_max) ? (repeat - current_chunk_start) : alloc_cache_size_max;
-                    access_memory_address((BYTE*)malloc_map_temp, address + double_qword_size + (current_chunk_start * double_qword_size), fetch_zones * double_qword_size);
+                if (prealloc_size >= ALLOC_CACHE_SIZE_MAX && zone_index >= current_chunk_start + ALLOC_CACHE_SIZE_MAX) {
+                    current_chunk_start += ALLOC_CACHE_SIZE_MAX;
+                    QWORD fetch_zones = (repeat - current_chunk_start < ALLOC_CACHE_SIZE_MAX) ? (repeat - current_chunk_start) : ALLOC_CACHE_SIZE_MAX;
+                    access_memory_address((BYTE*)malloc_map_temp, address + DOUBLE_QWORD_SIZE + (current_chunk_start * DOUBLE_QWORD_SIZE), fetch_zones * DOUBLE_QWORD_SIZE);
                 }
 
-                QWORD idx = (prealloc_size >= alloc_cache_size_max) ? zone_index - current_chunk_start : zone_index;
+                QWORD idx = (prealloc_size >= ALLOC_CACHE_SIZE_MAX) ? zone_index - current_chunk_start : zone_index;
                 QWORD current_start = malloc_map_temp[idx * 2];
                 QWORD current_stop = malloc_map_temp[idx * 2 + 1];
 
@@ -1238,13 +1228,13 @@ namespace registry_editor_service_local {
                         move_memory_address(current_start, table_start, table_old_bytes);
                         table_stop = current_stop;
                         table_resize_done = 1;
-                        prealloc_size += (alloc_reserve_zones + 1);
+                        prealloc_size += (ALLOC_RESERVE_ZONE + 1);
 
                         write_memory_address((BYTE*)&prealloc_size, table_start, sizeof(prealloc_size));
                         write_memory_address((BYTE*)&table_start, 0x0000000000000000, sizeof(QWORD));
 
                         QWORD new_table_zone_data[2] = { table_start, table_stop };
-                        write_memory_address((BYTE*)new_table_zone_data, table_start + double_qword_size + (zone_index * double_qword_size), double_qword_size);
+                        write_memory_address((BYTE*)new_table_zone_data, table_start + DOUBLE_QWORD_SIZE + (zone_index * DOUBLE_QWORD_SIZE), DOUBLE_QWORD_SIZE);
 
                         if (data_candidate != 0 && data_candidate_zone == zone_index && (data_candidate + size) >= table_start) {
                             data_candidate = 0;
@@ -1259,12 +1249,12 @@ namespace registry_editor_service_local {
                     QWORD gap_after_table = current_start - table_stop;
                     if (gap_after_table >= grow_bytes) {
                         table_stop += grow_bytes;
-                        prealloc_size += (alloc_reserve_zones + 1);
+                        prealloc_size += (ALLOC_RESERVE_ZONE + 1);
                         table_resize_done = 1;
 
                         write_memory_address((BYTE*)&prealloc_size, table_start, sizeof(prealloc_size));
                         QWORD new_table_zone_data[2] = { table_start, table_stop };
-                        write_memory_address((BYTE*)new_table_zone_data, table_start + double_qword_size + (table_zone * double_qword_size), double_qword_size);
+                        write_memory_address((BYTE*)new_table_zone_data, table_start + DOUBLE_QWORD_SIZE + (table_zone * DOUBLE_QWORD_SIZE), DOUBLE_QWORD_SIZE);
                         prev_stop = table_stop;
                     }
                 }
@@ -1293,12 +1283,12 @@ namespace registry_editor_service_local {
 
             if (prealloc_size < repeat + 1 && !table_resize_done && table_zone == repeat - 1) {
                 table_stop += grow_bytes;
-                prealloc_size += (alloc_reserve_zones + 1);
+                prealloc_size += (ALLOC_RESERVE_ZONE + 1);
                 table_resize_done = 1;
 
                 write_memory_address((BYTE*)&prealloc_size, table_start, sizeof(prealloc_size));
                 QWORD new_table_zone_data[2] = { table_start, table_stop };
-                write_memory_address((BYTE*)new_table_zone_data, table_start + double_qword_size + (table_zone * double_qword_size), double_qword_size);
+                write_memory_address((BYTE*)new_table_zone_data, table_start + DOUBLE_QWORD_SIZE + (table_zone * DOUBLE_QWORD_SIZE), DOUBLE_QWORD_SIZE);
             }
 
             if (prealloc_size < repeat + 1 && !table_resize_done) {
@@ -1320,9 +1310,9 @@ namespace registry_editor_service_local {
                 if (old_table_zone + 1 < repeat) {
                     QWORD shift_zone = old_table_zone + 1;
                     while (shift_zone < repeat) {
-                        QWORD shift_count = (repeat - shift_zone < alloc_cache_size_max) ? (repeat - shift_zone) : alloc_cache_size_max;
-                        access_memory_address((BYTE*)malloc_map_temp, new_table_start + double_qword_size + (shift_zone * double_qword_size), shift_count * double_qword_size);
-                        write_memory_address((BYTE*)malloc_map_temp, new_table_start + double_qword_size + ((shift_zone - 1) * double_qword_size), shift_count * double_qword_size);
+                        QWORD shift_count = (repeat - shift_zone < ALLOC_CACHE_SIZE_MAX) ? (repeat - shift_zone) : ALLOC_CACHE_SIZE_MAX;
+                        access_memory_address((BYTE*)malloc_map_temp, new_table_start + DOUBLE_QWORD_SIZE + (shift_zone * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
+                        write_memory_address((BYTE*)malloc_map_temp, new_table_start + DOUBLE_QWORD_SIZE + ((shift_zone - 1) * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
                         shift_zone += shift_count;
                     }
                 }
@@ -1331,22 +1321,22 @@ namespace registry_editor_service_local {
                 if (new_table_zone < used_after_remove) {
                     QWORD shift_end = used_after_remove;
                     while (shift_end > new_table_zone) {
-                        QWORD shift_count = (shift_end - new_table_zone > alloc_cache_size_max) ? alloc_cache_size_max : (shift_end - new_table_zone);
+                        QWORD shift_count = (shift_end - new_table_zone > ALLOC_CACHE_SIZE_MAX) ? ALLOC_CACHE_SIZE_MAX : (shift_end - new_table_zone);
                         QWORD shift_zone = shift_end - shift_count;
-                        access_memory_address((BYTE*)malloc_map_temp, new_table_start + double_qword_size + (shift_zone * double_qword_size), shift_count * double_qword_size);
-                        write_memory_address((BYTE*)malloc_map_temp, new_table_start + double_qword_size + ((shift_zone + 1) * double_qword_size), shift_count * double_qword_size);
+                        access_memory_address((BYTE*)malloc_map_temp, new_table_start + DOUBLE_QWORD_SIZE + (shift_zone * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
+                        write_memory_address((BYTE*)malloc_map_temp, new_table_start + DOUBLE_QWORD_SIZE + ((shift_zone + 1) * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
                         shift_end = shift_zone;
                     }
                 }
 
                 QWORD new_table_zone_data[2] = { new_table_start, new_table_stop };
-                write_memory_address((BYTE*)new_table_zone_data, new_table_start + double_qword_size + (new_table_zone * double_qword_size), double_qword_size);
+                write_memory_address((BYTE*)new_table_zone_data, new_table_start + DOUBLE_QWORD_SIZE + (new_table_zone * DOUBLE_QWORD_SIZE), DOUBLE_QWORD_SIZE);
 
                 table_start = new_table_start;
                 table_stop = new_table_stop;
                 table_zone = new_table_zone;
                 table_resize_done = 1;
-                prealloc_size += (alloc_reserve_zones + 1);
+                prealloc_size += (ALLOC_RESERVE_ZONE + 1);
                 write_memory_address((BYTE*)&prealloc_size, table_start, sizeof(prealloc_size));
 
                 if (data_candidate != 0 && data_candidate_zone == table_candidate_zone) {
@@ -1388,21 +1378,21 @@ namespace registry_editor_service_local {
             }
 
             QWORD return_address[2] = { data_candidate, data_candidate + size };
-            QWORD zone_address = table_start + double_qword_size + (data_candidate_zone * double_qword_size);
+            QWORD zone_address = table_start + DOUBLE_QWORD_SIZE + (data_candidate_zone * DOUBLE_QWORD_SIZE);
 
             if (data_candidate_zone >= repeat) {
-                write_memory_address((BYTE*)return_address, zone_address, double_qword_size);
+                write_memory_address((BYTE*)return_address, zone_address, DOUBLE_QWORD_SIZE);
             }
             else {
                 QWORD shift_end = repeat;
                 while (shift_end > data_candidate_zone) {
-                    QWORD shift_count = (shift_end - data_candidate_zone > alloc_cache_size_max) ? alloc_cache_size_max : (shift_end - data_candidate_zone);
+                    QWORD shift_count = (shift_end - data_candidate_zone > ALLOC_CACHE_SIZE_MAX) ? ALLOC_CACHE_SIZE_MAX : (shift_end - data_candidate_zone);
                     QWORD shift_zone = shift_end - shift_count;
-                    access_memory_address((BYTE*)malloc_map_temp, table_start + double_qword_size + (shift_zone * double_qword_size), shift_count * double_qword_size);
-                    write_memory_address((BYTE*)malloc_map_temp, table_start + double_qword_size + ((shift_zone + 1) * double_qword_size), shift_count * double_qword_size);
+                    access_memory_address((BYTE*)malloc_map_temp, table_start + DOUBLE_QWORD_SIZE + (shift_zone * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
+                    write_memory_address((BYTE*)malloc_map_temp, table_start + DOUBLE_QWORD_SIZE + ((shift_zone + 1) * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
                     shift_end = shift_zone;
                 }
-                write_memory_address((BYTE*)return_address, zone_address, double_qword_size);
+                write_memory_address((BYTE*)return_address, zone_address, DOUBLE_QWORD_SIZE);
             }
 
             repeat++;
@@ -1435,21 +1425,21 @@ namespace registry_editor_service_local {
             access_memory_address((BYTE*)&repeat, table_address + sizeof(prealloc_size), sizeof(repeat));
             // if (prealloc_size == 0 || repeat < 2 || repeat > prealloc_size) return;
 
-            QWORD map_size = (prealloc_size >= alloc_cache_size_max) ? alloc_cache_size_max : prealloc_size;
-            malloc_map_temp = (QWORD*)malloc(map_size * double_qword_size);
+            QWORD map_size = (prealloc_size >= ALLOC_CACHE_SIZE_MAX) ? ALLOC_CACHE_SIZE_MAX : prealloc_size;
+            malloc_map_temp = (QWORD*)malloc(map_size * DOUBLE_QWORD_SIZE);
             if (malloc_map_temp) {
-                access_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size, map_size * double_qword_size);
+                access_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE, map_size * DOUBLE_QWORD_SIZE);
 
                 QWORD current_chunk_start = 0, table_zone = repeat, target_zone = repeat, zone_index = 1;
 
                 for (; zone_index < repeat; zone_index++) {
-                    if (prealloc_size >= alloc_cache_size_max && zone_index >= current_chunk_start + alloc_cache_size_max) {
-                        current_chunk_start += alloc_cache_size_max;
-                        QWORD fetch_zones = (repeat - current_chunk_start < alloc_cache_size_max) ? (repeat - current_chunk_start) : alloc_cache_size_max;
-                        access_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size + (current_chunk_start * double_qword_size), fetch_zones * double_qword_size);
+                    if (prealloc_size >= ALLOC_CACHE_SIZE_MAX && zone_index >= current_chunk_start + ALLOC_CACHE_SIZE_MAX) {
+                        current_chunk_start += ALLOC_CACHE_SIZE_MAX;
+                        QWORD fetch_zones = (repeat - current_chunk_start < ALLOC_CACHE_SIZE_MAX) ? (repeat - current_chunk_start) : ALLOC_CACHE_SIZE_MAX;
+                        access_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE + (current_chunk_start * DOUBLE_QWORD_SIZE), fetch_zones * DOUBLE_QWORD_SIZE);
                     }
 
-                    QWORD idx = (prealloc_size >= alloc_cache_size_max) ? zone_index - current_chunk_start : zone_index;
+                    QWORD idx = (prealloc_size >= ALLOC_CACHE_SIZE_MAX) ? zone_index - current_chunk_start : zone_index;
                     QWORD current_start = malloc_map_temp[idx * 2];
 
                     if (current_start == table_address) table_zone = zone_index;
@@ -1467,9 +1457,9 @@ namespace registry_editor_service_local {
                 if (target_zone + 1 < repeat) {
                     QWORD shift_zone = target_zone + 1;
                     while (shift_zone < repeat) {
-                        QWORD shift_count = (repeat - shift_zone < alloc_cache_size_max) ? (repeat - shift_zone) : alloc_cache_size_max;
-                        access_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size + (shift_zone * double_qword_size), shift_count * double_qword_size);
-                        write_memory_address((BYTE*)malloc_map_temp, table_address + double_qword_size + ((shift_zone - 1) * double_qword_size), shift_count * double_qword_size);
+                        QWORD shift_count = (repeat - shift_zone < ALLOC_CACHE_SIZE_MAX) ? (repeat - shift_zone) : ALLOC_CACHE_SIZE_MAX;
+                        access_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE + (shift_zone * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
+                        write_memory_address((BYTE*)malloc_map_temp, table_address + DOUBLE_QWORD_SIZE + ((shift_zone - 1) * DOUBLE_QWORD_SIZE), shift_count * DOUBLE_QWORD_SIZE);
                         shift_zone += shift_count;
                     }
                 }
@@ -1479,7 +1469,7 @@ namespace registry_editor_service_local {
                 free(malloc_map_temp);
                 {
                     QWORD last_zone_end = 0;
-                    access_memory_address((BYTE*)&last_zone_end, table_address + (repeat * double_qword_size) + sizeof(QWORD), sizeof(QWORD));
+                    access_memory_address((BYTE*)&last_zone_end, table_address + (repeat * DOUBLE_QWORD_SIZE) + sizeof(QWORD), sizeof(QWORD));
 
                     QWORD last_sector = last_zone_end / page_size;
                     if (last_sector < this->L1_max_sector) {
@@ -1501,9 +1491,9 @@ namespace registry_editor_service_local {
             "-------------------------------------------------------------------------------------------------------\n\n"
             "This file cannot opened by Windows Registry Editor.\n\n"
             "-------------------------------------------------------------------------------------------------------\n";
-        inline static constexpr char MAGIC_HEADER[] = "REGX\n";
+        inline static constexpr char MAGIC_HEADER[] = "REGX\0\n";
 
-        FileHandle load_from_disk(registry_database* database, const char* path_to_regx_file) {
+        FileHandle load_from_disk(const char* path_to_regx_file) {
             std::ifstream main(path_to_regx_file, std::ios::binary);
             if (!main.is_open()) {
 #ifdef USING_ECC
@@ -1519,6 +1509,7 @@ namespace registry_editor_service_local {
 
                 char ch;
                 while (main.get(ch) && ch != '\n') {
+                    if (ch == '\r') continue;
                     magic = (char*)realloc(magic, magic_len + 2);
                     magic[magic_len] = ch;
                     magic[magic_len + 1] = '\0';
@@ -1535,7 +1526,6 @@ namespace registry_editor_service_local {
                             if (signature) {
                                 main.read(signature, length - 1);
                                 signature[length - 1] = '\0';
-                                main.get(ch);
 
                                 if (strcmp(signature, FORMAT_SIGNATURE) != 0) {
 #ifdef USING_ECC
@@ -1553,14 +1543,15 @@ namespace registry_editor_service_local {
 #endif
                             }
                         }
-
-                        // format version check
                         {
+                            // format version check
+
                             size_t version_len = 0;
                             magic = (char*)realloc(magic, 1);
                             if (magic) magic[0] = '\0';
 
                             while (main.get(ch) && ch != '\n') {
+                                if (ch == '\r') continue;
                                 magic = (char*)realloc(magic, version_len + 2);
                                 magic[version_len] = ch;
                                 magic[version_len + 1] = '\0';
@@ -1569,7 +1560,7 @@ namespace registry_editor_service_local {
 
                             char* format_version = magic;
                             if (format_version) {
-                                if (strcmp(format_version, "2.0A") == 0) {
+                                if (strcmp(format_version, "2.0A\0") == 0) {
                                     free(magic);
                                     goto format_version_2e0A;
                                 }
@@ -1620,26 +1611,115 @@ namespace registry_editor_service_local {
                             file.close();
                             this->cache_handle = utilityX::filesystem::open_file(path.c_str());
                         }
-                        *database->L1_cache = 0;
-                        utilityX::filesystem::fetch_chunk(this->cache_handle, database->L1_cache, page_size, 0);
+                        this->L1_sector = 0;
+                        utilityX::filesystem::fetch_chunk(this->cache_handle, this->L1_cache, page_size, 0);
                         QWORD buffered_pointer = sizeof(QWORD);
+
+                        QWORD elements_count;
+                        QWORD malloctablezone;
+                        QWORD now_address;
+						BYTE* copy_page = (BYTE*)malloc(MMAP_COPY_CHUNK_SIZE);
                         {
                             //load section .data
-                            BYTE* string = (BYTE*)malloc(1);
-                            QWORD REP = 0;
+
+                            QWORD endofmalloctable;
+                            QWORD endofbytemap;
+                            QWORD bytemapzone;
+                            QWORD bytemap_input[4] = {
+                                0x00000000000000000,
+                                0x00000000000000000,
+                                0x00000000000000000,
+                                0x00000000000000000
+                            };
+
+                            QWORD REP;
+
+                            main.read((char*)&elements_count, sizeof(QWORD));
                             main.read((char*)&REP, sizeof(QWORD));
-                            for (; REP > 0; REP--) {
-                                QWORD id = 0;
-                                main.read((char*)&id, sizeof(id));
+                            {
+                                QWORD malloc_table_prealloc_size = 4 + ALLOC_RESERVE_ZONE + REP;
                                 {
-                                    QWORD STRLEN = 0;
-                                    main.read((char*)&STRLEN, sizeof(STRLEN));
-                                    string = (BYTE*)realloc(string, STRLEN);
-                                    main.read((char*)string, STRLEN);
+                                    endofmalloctable = (malloc_table_prealloc_size + elements_count + 1) * DOUBLE_QWORD_SIZE + 0x0000000000000018;
+                                    endofbytemap = endofmalloctable + DOUBLE_QWORD_SIZE + ((BYTEMAP_RESERVE_ZONES + REP) * TRIPLE_QWORD_SIZE) + 8;
+                                    malloctablezone = 0x0000000000000058;
+                                    bytemapzone = endofmalloctable + DOUBLE_QWORD_SIZE;
+                                    bytemap_input[2] = endofbytemap;
+
+                                    QWORD address[11] = {
+                                        // header
+                                        0x0000000000000018, // address to malloc table
+                                        endofmalloctable,   // address to bytes map
+                                        0xFFFFFFFFFFFFFFFF, // address to root key (temp)
+
+                                        // malloc table
+                                        malloc_table_prealloc_size, 3 + REP + elements_count, // malloc table prealloc size, repeat
+
+                                        0x0000000000000000, 0x0000000000000018, // defining 3 fixed address for reader
+                                        0x0000000000000018, endofmalloctable,   // defining of malloc table
+                                        endofmalloctable, endofbytemap,       // defining of bytes map
+                                    };
+                                    write_memory_address((BYTE*)&address, 0x0000000000000000, sizeof(address));
                                 }
-                                write_memory_address((BYTE*)&bytemap_address, 0x000000000000008, sizeof(QWORD));
+                                {
+                                    QWORD address[2] = {
+                                        REP + BYTEMAP_RESERVE_ZONES + 1,   // bytemap prealloc size
+                                        REP                                 // bytemap repeat
+                                    };
+                                    write_memory_address((BYTE*)&address, endofmalloctable, sizeof(address));
+                                }
+                            }
+                            for (; REP > 0; REP--) {
+                                main.read((char*)&bytemap_input, DOUBLE_QWORD_SIZE);
+                                write_memory_address((BYTE*)&bytemap_input, bytemapzone, TRIPLE_QWORD_SIZE);
+
+                                QWORD string_size = 0;
+                                main.read((char*)&string_size, sizeof(QWORD));
+                                write_memory_address((BYTE*)&string_size, bytemap_input[2], sizeof(QWORD));
+                                bytemap_input[2] += sizeof(QWORD);
+
+                                if (string_size > MMAP_COPY_CHUNK_SIZE) {
+									QWORD remaining = string_size;
+
+                                    while (remaining >= MMAP_COPY_CHUNK_SIZE) {
+                                        main.read((char*)(copy_page), MMAP_COPY_CHUNK_SIZE);
+                                        write_memory_address((BYTE*)copy_page, bytemap_input[2], MMAP_COPY_CHUNK_SIZE);
+                                        bytemap_input[2] += MMAP_COPY_CHUNK_SIZE;
+                                        remaining -= MMAP_COPY_CHUNK_SIZE;
+                                    }
+                                    if (remaining > 0) {
+                                        main.read((char*)(copy_page), remaining);
+                                        write_memory_address((BYTE*)copy_page, bytemap_input[2], remaining);
+                                        bytemap_input[2] += remaining;
+                                    }
+                                }
+                                else {
+                                    main.read((char*)copy_page, string_size);
+
+                                    bytemap_input[3] = bytemap_input[2] + string_size + sizeof(QWORD);
+                                    write_memory_address((BYTE*)copy_page, bytemap_input[2], string_size);
+                                    bytemap_input[2] += string_size;
+                                }
+                                write_memory_address((((BYTE*)&bytemap_input) + DOUBLE_QWORD_SIZE), malloctablezone, DOUBLE_QWORD_SIZE);
+                                malloctablezone += DOUBLE_QWORD_SIZE;
+                                bytemapzone += TRIPLE_QWORD_SIZE;
+                            }
+                            now_address = bytemap_input[2];
+                        }
+                        {
+                            // load section .text
+
+                            BYTE keyobject[MMAP_KEY_STRUCTURE_SIZE];
+
+                            QWORD* object = (QWORD*)&keyobject;
+                            WORD* mask = (WORD*)&object[1];
+                            {
+                                // root route
+
+                                main.read((char*)mask, sizeof(WORD));
+
                             }
                         }
+                        free(copy_page);
                         goto end_processor;
                     }
                     catch (...) {
@@ -1656,31 +1736,57 @@ namespace registry_editor_service_local {
                 // end
             }
         }
-        registry_database() = default;
-        registry_database(const char* path_to_registry_file, OpenMode open_mode, const char* password) {
-            this->L1_cache = (BYTE*)_aligned_malloc(page_size, page_size);
-            std::memset(L1_cache, 0, page_size);
+        registry_editor_service_local() = default;
+        registry_editor_service_local(const char* path_to_registry_file) {
+            this->L1_cache = (BYTE*)_aligned_malloc(page_size, utilityX::filesystem::page_size());
+            // std::memset(L1_cache, 0, page_size);
             this->registry_file_path = new char[std::strlen(path_to_registry_file) + 1];
             strncpy_s(this->registry_file_path, sizeof(this->registry_file_path), path_to_registry_file, _TRUNCATE);
-            this->function_mode = open_mode;
-            this->cache_handle = load_from_disk(this, path_to_registry_file);
+            this->cache_handle = load_from_disk(path_to_registry_file);
             this->L2_map = new ankerl::unordered_dense::map<std::string, QWORD>();
         }
-        ~registry_database() {
+        ~registry_editor_service_local() {
             _aligned_free(this->L1_cache);
             delete this->L2_map;
             delete[] this->registry_file_path;
         }
 
     private:
-        friend registry_database* registry_begin(const std::string& path_to_registry_file, OpenMode open_mode);
+        friend registry_database registry_begin(const std::string& path_to_registry_file);
+        friend void registry_end(registry_database registry_handle);
     };
 
-    ankerl::unordered_dense::map<std::string_view, registry_database*> lookup_table;
-    registry_database* registry_begin(const std::string& path_to_registry_file, OpenMode open_mode = OpenMode::ReadWrite) {
+    // container for handle;
+    ankerl::unordered_dense::map<std::string_view, registry_database> lookup_table;
+
+    class registry_database {
+        // this is a handle
+        /*
+			PLEASE NOTE THAT THIS VERSION DOES NOT BACKWARD COMPATIBLE WITH THE PREVIOUS VERSION OF REGISTRY EDITOR SERVICE LOCAL
+        */
+    private:
+		registry_editor_service_local* service;
+
+        registry_database() = default;
+        ~registry_database() {
+            if (service) {
+                
+
+                service = nullptr;
+            }
+            else return;
+        }
+    private:
+        friend registry_database registry_begin(const std::string& path_to_registry_file);
+        friend void registry_end(registry_database registry_handle);
+    public:
+
+    };
+
+    registry_database registry_begin(const std::string& path_to_registry_file) {
 
     }
-    void registry_end(registry_database* registry) {
+    void registry_end(registry_database registry_handle) {
 
     }
 }
