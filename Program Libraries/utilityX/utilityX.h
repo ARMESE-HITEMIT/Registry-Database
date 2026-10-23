@@ -1270,6 +1270,51 @@ namespace utilityX {
             return ftruncate(handle, new_size) == 0;
 #endif
         }
+        FORCE_INLINE bool test_and_lock(FileHandle handle) {
+#ifdef _WIN32
+            OVERLAPPED ov{};
+            return LockFileEx(
+                handle,
+                LOCKFILE_EXCLUSIVE_LOCK | LOCKFILE_FAIL_IMMEDIATELY,
+                0,
+                MAXDWORD,
+                MAXDWORD,
+                &ov
+            ) == FALSE;
+#else
+            struct flock lock {};
+            lock.l_type = F_WRLCK;
+            lock.l_whence = SEEK_SET;
+            lock.l_start = 0;
+            lock.l_len = 0;
+
+            if (fcntl(handle, F_SETLK, &lock) == 0)
+                return false;
+
+            return errno == EACCES || errno == EAGAIN;
+#endif
+        }
+
+        FORCE_INLINE bool compare_and_swap(FileHandle handle) {
+#ifdef _WIN32
+            OVERLAPPED ov{};
+            return UnlockFileEx(
+                handle,
+                0,
+                MAXDWORD,
+                MAXDWORD,
+                &ov
+            ) != FALSE;
+#else
+            struct flock lock {};
+            lock.l_type = F_UNLCK;
+            lock.l_whence = SEEK_SET;
+            lock.l_start = 0;
+            lock.l_len = 0;
+
+            return fcntl(handle, F_SETLK, &lock) == 0;
+#endif
+        }
     }
     namespace coder {
 

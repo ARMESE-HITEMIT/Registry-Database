@@ -4,7 +4,7 @@
 #include "../../Program Libraries/registry_editor/registry_editor-service-local.h"
 
 int main() {
-	registry_editor_service_local::registry_database a;
+	registry_editor_service_local::registry_editor_service_local a;
 	a.L1_sector = 0;
 	a.L1_cache = (BYTE*)_aligned_malloc(registry_editor_service_local::page_size, utilityX::filesystem::page_size());
 	// memset(a.L1_cache, 0x67, registry_editor_service_local::page_size);
