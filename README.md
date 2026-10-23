@@ -4,7 +4,7 @@
 
 ## DEV NOTE:
 - This version store runtime data in binary file (like ram) not memory so u can open & store large file without using many ram (swap & virtual address)
-- Support lock data with password (key, value, byte, word, dword, qword) using encryption (AES-256)
+- ~~Support lock data with password (key, value, byte, word, dword, qword) using encryption (AES-256)~~
 - Server / Host with custom ip/port
 - fix data safety issues
 - include std::exception
