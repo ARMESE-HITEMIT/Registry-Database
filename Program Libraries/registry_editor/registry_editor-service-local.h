@@ -368,7 +368,7 @@ namespace registry_editor_service_local {
 	const QWORD page_capacity = utilityX::filesystem::page_size();
 	const QWORD page_size = NUMBER_OF_PAGE_CACHED * page_capacity;
 
-	// im too for this
+	// im too lazy for this
 	// 
 	// namespace encryption {
 	// 	namespace detail_aes {
